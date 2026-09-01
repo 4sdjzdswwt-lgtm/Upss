@@ -231,6 +231,189 @@
     line-height:1.6;
     color:var(--neutral);
   }
+
+  /* --- tahmin oyunu --- */
+  .gameLaunchBtn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;
+    font-size:13px;
+    padding:10px 16px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin-bottom:18px;
+  }
+  .gameLaunchBtn:active{opacity:.85;}
+
+  .gameOverlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(34,29,22,.55);
+    z-index:50;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .gameOverlay.show{display:flex;}
+  .gameCard{
+    background:var(--paper);
+    width:100%;
+    max-width:480px;
+    border-radius:16px 16px 0 0;
+    padding:26px 20px 28px;
+    position:relative;
+    max-height:88vh;
+    overflow-y:auto;
+    box-shadow:0 -8px 30px rgba(0,0,0,.3);
+  }
+  @media(min-width:520px){
+    .gameOverlay{align-items:center;}
+    .gameCard{border-radius:16px;}
+  }
+  .gameClose{
+    position:absolute; top:14px; right:14px;
+    width:30px;height:30px;
+    border-radius:50%;
+    border:1.5px solid var(--line);
+    background:var(--card);
+    font-size:16px;
+    line-height:1;
+    color:var(--neutral);
+    cursor:pointer;
+  }
+  #gameIntro h2, #gameSummary h2{
+    font-size:20px; margin:2px 0 10px; font-weight:700;
+  }
+  #gameIntro p, #gameSummary p{
+    font-size:14px; color:#514A3D; line-height:1.55; margin:0 0 18px;
+  }
+  .gamePrimaryBtn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+    padding:13px 20px;
+    background:var(--kraft);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    width:100%;
+  }
+  .gamePrimaryBtn:active{background:var(--kraft-dark);}
+  .gameSecondaryBtn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+    padding:13px 20px;
+    background:#fff;
+    color:var(--kraft);
+    border:1.5px solid var(--kraft);
+    border-radius:8px;
+    cursor:pointer;
+    width:100%;
+  }
+  .gameSecondaryBtn:active{background:rgba(110,74,48,.08);}
+  .summaryBtnRow{display:flex;gap:10px;}
+  .summaryBtnRow .gameSecondaryBtn, .summaryBtnRow .gamePrimaryBtn{width:auto;flex:1;}
+  .gameLevelTag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.03em;
+    color:var(--kraft);
+    background:rgba(110,74,48,.1);
+    border:1px solid rgba(110,74,48,.25);
+    border-radius:20px;
+    padding:4px 11px;
+    width:fit-content;
+    margin-bottom:12px;
+  }
+  .passStatus{
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:13.5px;
+    font-weight:600;
+    margin-bottom:16px;
+  }
+  .passStatus.pass{background:rgba(31,110,80,.12); color:#1F6E50; border:1.5px solid rgba(31,110,80,.3);}
+  .passStatus.fail{background:rgba(184,64,44,.1); color:var(--koln); border:1.5px solid rgba(184,64,44,.3);}
+  .gameProgress{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--neutral);
+    margin:2px 0 14px;
+  }
+  .gameCountryTag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    font-weight:600;
+    letter-spacing:.04em;
+    color:var(--kraft);
+    background:rgba(110,74,48,.1);
+    border:1px solid rgba(110,74,48,.25);
+    border-radius:20px;
+    padding:3px 10px;
+    width:fit-content;
+    margin:0 auto 8px;
+    text-align:center;
+  }
+  .gameCode{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:42px;
+    font-weight:700;
+    text-align:center;
+    padding:28px 10px;
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    margin-bottom:18px;
+    letter-spacing:.03em;
+  }
+  .gameCode.text{
+    font-size:24px;
+    padding:24px 14px;
+  }
+  .gameChoices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .choiceBtn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:700;
+    font-size:16px;
+    padding:16px 8px;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    background:#fff;
+    cursor:pointer;
+  }
+  .choiceBtn.koln{color:var(--koln);}
+  .choiceBtn.herne{color:var(--herne);}
+  .choiceBtn:disabled{opacity:.45;cursor:default;}
+  .gameFeedback{
+    border-radius:10px;
+    padding:14px 16px;
+    font-size:14.5px;
+    font-weight:600;
+    margin-bottom:16px;
+    text-align:center;
+  }
+  .gameFeedback.correct{background:rgba(31,110,80,.12); color:#1F6E50; border:1.5px solid rgba(31,110,80,.3);}
+  .gameFeedback.wrong{background:rgba(184,64,44,.1); color:var(--koln); border:1.5px solid rgba(184,64,44,.3);}
+  .reviewList{margin-bottom:18px;}
+  .reviewItem{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 12px; border-radius:8px; margin-bottom:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+    background:var(--card); border:1px solid var(--line);
+  }
+  .reviewItem.wrong{border-color:rgba(184,64,44,.4);}
+  .reviewItem .rCode{font-weight:700;}
+  .reviewItem .rResult{font-size:11px;}
+  .reviewItem.correct .rResult{color:#1F6E50;}
+  .reviewItem.wrong .rResult{color:var(--koln);}
 </style>
 </head>
 <body>
@@ -247,6 +430,8 @@
     <h1 id="titleH1">Bu kod nereye gidiyor?</h1>
     <p id="subP">Sevkiyat merkezinden fotoğraflanan yönlendirme etiketlerine göre — posta kodunu gir, Köln mü Herne mi (ya da başka bir hedef mi) hemen görün.</p>
   </header>
+
+  <button class="gameLaunchBtn" id="gameLaunchBtn">🎯 <span id="gameLaunchBtnText">Tahmin Oyunu</span></button>
 
   <div class="originStrip">
     <span class="dot"></span> <span id="originText">Kaynak: Wiesbaden &nbsp;·&nbsp; Hedefler: Köln (N) / Herne (N) &nbsp;·&nbsp; eff. 31.08.2026</span>
@@ -280,6 +465,43 @@
       </div>
     </div>
     <div class="warnBox" id="warnBox" style="display:none;"></div>
+  </div>
+
+  <div class="gameOverlay" id="gameOverlay">
+    <div class="gameCard">
+      <button class="gameClose" id="gameCloseBtn">×</button>
+
+      <div id="gameIntro">
+        <div class="gameLevelTag" id="gameLevelTagIntro"></div>
+        <h2 id="gameIntroTitle"></h2>
+        <p id="gameIntroText"></p>
+        <button class="gamePrimaryBtn" id="gameStartBtn"></button>
+      </div>
+
+      <div id="gamePlay" style="display:none;">
+        <div class="gameProgress" id="gameProgress"></div>
+        <div class="gameCountryTag" id="gameCountryTag"></div>
+        <div class="gameCode" id="gameCode"></div>
+        <div class="gameChoices">
+          <button class="choiceBtn koln" id="choiceKoln"></button>
+          <button class="choiceBtn herne" id="choiceHerne"></button>
+        </div>
+        <div class="gameFeedback" id="gameFeedback" style="display:none;"></div>
+        <button class="gamePrimaryBtn" id="gameNextBtn" style="display:none;"></button>
+      </div>
+
+      <div id="gameSummary" style="display:none;">
+        <div class="gameLevelTag" id="gameLevelTagSummary"></div>
+        <h2 id="summaryTitleEl"></h2>
+        <p id="summaryTextEl"></p>
+        <div class="passStatus" id="passStatus"></div>
+        <div class="reviewList" id="reviewList"></div>
+        <div class="summaryBtnRow" id="summaryBtnRow">
+          <button class="gameSecondaryBtn" id="retryBtn"></button>
+          <button class="gamePrimaryBtn" id="nextLevelBtn" style="display:none;"></button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <footer id="footerText">
@@ -331,7 +553,29 @@ const TR_TEXT = {
     warnGuessTitle: 'Tahmini eşleşme',
     warnGuessBody: (range) => 'Bu kod, kısmi yazılmış ya da etikette kısaltılmış bir aralığa ("' + range + '") göre eşleşti. Kesin emin olmak için tam kodu yaz ya da etikete bak.',
     chipGuess: ' (kısmi kod)', chipUncertain: ' (tahmini)',
-    wholeCountry: '(tüm ülke)'
+    wholeCountry: '(tüm ülke)',
+    game: {
+      launchBtn: 'Tahmin Oyunu',
+      introTitle: 'Köln mü, Herne mi?',
+      introText: (count) => 'Sana rastgele ' + count + ' soru göstereceğiz — Almanya, Hollanda posta kodları ve Danimarka / Finlandiya / İsveç / WW Economy gibi tüm-ülke etiketleri karışık gelecek. Her biri için Köln mü Herne mi gittiğini tahmin edeceksin. Her cevaptan hemen sonra doğru mu yanlış mı yaptığını göreceksin. 3 veya daha fazla yanlış yaparsan bu seviyeyi tekrar çözmen gerekecek.',
+      startBtn: 'Başla',
+      levelLabel: (level,count) => 'Seviye ' + level + ' · ' + count + ' Soru',
+      questionLabel: (i,total)=> 'Soru ' + i + ' / ' + total,
+      kolnBtn: 'Köln',
+      herneBtn: 'Herne',
+      correct: 'Doğru! ✓',
+      wrong: (city) => 'Yanlış ✗ — Doğrusu: ' + city,
+      nextBtn: 'Sonraki Soru',
+      finishBtn: 'Sonucu Gör',
+      summaryTitle: 'Seviye tamamlandı',
+      summaryText: (correct,total) => total + ' sorudan ' + correct + ' doğru, ' + (total-correct) + ' yanlış yaptın.',
+      passMsg: 'Bu seviyeyi geçtin! İstersen tekrar çöz, istersen sonraki seviyeye geç.',
+      failMsg: '3 ya da daha fazla yanlış yaptın — bu seviyeyi geçmek için tekrar çözmelisin.',
+      reviewCorrect: 'Doğru',
+      reviewWrong: (city) => 'Yanlış — Doğrusu: ' + city,
+      retryBtn: 'Bu Seviyeyi Tekrar Çöz',
+      nextLevelBtn: (level) => 'Seviye ' + level + '\'e Geç'
+    }
   },
   en: {
     tag: 'DE FLOW 260831 · Departing Wiesbaden',
@@ -362,7 +606,29 @@ const TR_TEXT = {
     warnGuessTitle: 'Estimated match',
     warnGuessBody: (range) => 'This code matched via a partially typed code and/or an abbreviated range on the label ("' + range + '"). Type the full code, or check the label, to be certain.',
     chipGuess: ' (partial code)', chipUncertain: ' (estimated)',
-    wholeCountry: '(whole country)'
+    wholeCountry: '(whole country)',
+    game: {
+      launchBtn: 'Guessing Game',
+      introTitle: 'Köln or Herne?',
+      introText: (count) => 'We\'ll show you ' + count + ' random questions — a mix of German and Dutch postcodes plus whole-country labels like Denmark / Finland / Sweden / WW Economy. You guess whether each one goes to Köln or Herne. You\'ll see right after each answer whether you got it right. Get 3 or more wrong and you\'ll need to redo this level.',
+      startBtn: 'Start',
+      levelLabel: (level,count) => 'Level ' + level + ' · ' + count + ' Questions',
+      questionLabel: (i,total)=> 'Question ' + i + ' / ' + total,
+      kolnBtn: 'Köln',
+      herneBtn: 'Herne',
+      correct: 'Correct! ✓',
+      wrong: (city) => 'Wrong ✗ — Correct answer: ' + city,
+      nextBtn: 'Next Question',
+      finishBtn: 'See Result',
+      summaryTitle: 'Level complete',
+      summaryText: (correct,total) => 'You got ' + correct + ' out of ' + total + ' right, and ' + (total-correct) + ' wrong.',
+      passMsg: 'You passed this level! Redo it if you like, or move on to the next one.',
+      failMsg: 'You got 3 or more wrong — redo this level to pass it.',
+      reviewCorrect: 'Correct',
+      reviewWrong: (city) => 'Wrong — Correct answer: ' + city,
+      retryBtn: 'Redo This Level',
+      nextLevelBtn: (level) => 'Go to Level ' + level
+    }
   },
   de: {
     tag: 'DE FLOW 260831 · Abgang Wiesbaden',
@@ -393,7 +659,29 @@ const TR_TEXT = {
     warnGuessTitle: 'Geschätzter Treffer',
     warnGuessBody: (range) => 'Dieser Code wurde über einen teilweise eingegebenen Code und/oder einen abgekürzten Bereich auf dem Etikett ("' + range + '") zugeordnet. Für Gewissheit den vollständigen Code eingeben oder das Etikett prüfen.',
     chipGuess: ' (Teilcode)', chipUncertain: ' (geschätzt)',
-    wholeCountry: '(ganzes Land)'
+    wholeCountry: '(ganzes Land)',
+    game: {
+      launchBtn: 'Rate-Spiel',
+      introTitle: 'Köln oder Herne?',
+      introText: (count) => 'Wir zeigen dir ' + count + ' zufällige Fragen — ein Mix aus deutschen und niederländischen Postleitzahlen sowie Ganzland-Etiketten wie Dänemark / Finnland / Schweden / WW Economy. Du rätst, ob es jeweils nach Köln oder Herne geht. Nach jeder Antwort siehst du sofort, ob es richtig oder falsch war. Bei 3 oder mehr Fehlern musst du dieses Level wiederholen.',
+      startBtn: 'Starten',
+      levelLabel: (level,count) => 'Level ' + level + ' · ' + count + ' Fragen',
+      questionLabel: (i,total)=> 'Frage ' + i + ' / ' + total,
+      kolnBtn: 'Köln',
+      herneBtn: 'Herne',
+      correct: 'Richtig! ✓',
+      wrong: (city) => 'Falsch ✗ — Richtig wäre: ' + city,
+      nextBtn: 'Nächste Frage',
+      finishBtn: 'Ergebnis ansehen',
+      summaryTitle: 'Level abgeschlossen',
+      summaryText: (correct,total) => 'Du hast ' + correct + ' von ' + total + ' richtig und ' + (total-correct) + ' falsch beantwortet.',
+      passMsg: 'Du hast dieses Level bestanden! Wiederhole es gern, oder geh weiter zum nächsten.',
+      failMsg: 'Du hattest 3 oder mehr Fehler — wiederhole dieses Level, um es zu bestehen.',
+      reviewCorrect: 'Richtig',
+      reviewWrong: (city) => 'Falsch — Richtig wäre: ' + city,
+      retryBtn: 'Level wiederholen',
+      nextLevelBtn: (level) => 'Zu Level ' + level
+    }
   }
 };
 let currentLang = 'tr';
@@ -409,7 +697,9 @@ function applyStaticText(){
     el.textContent = L.countries[el.dataset.countryLabel];
   });
   document.getElementById('footerText').textContent = L.footer;
+  document.getElementById('gameLaunchBtnText').textContent = L.game.launchBtn;
   updateInputForCountry();
+  refreshGameTexts();
 }
 
 document.getElementById('langRow').addEventListener('click', (e)=>{
@@ -538,6 +828,310 @@ function matchAgainst(list, digits){
   });
   return hits;
 }
+
+/* ============================================================
+   TAHMİN OYUNU — Köln/Herne için DE + NL posta kodu aralıklarından
+   ve DK/FI/SE/WW gibi "tüm ülke" etiketlerinden TEK anlamlı
+   (belirsiz olmayan) sorular üretir; kullanıcı her biri için
+   Köln mü Herne mi diye tahmin eder. Seviye 1 = 10 soru, her
+   sonraki seviye +5 soru (15, 20, 25, ...). 3+ yanlışta o seviye
+   tekrar edilmek zorunda; 0-2 yanlışta hem tekrar hem sonraki
+   seviyeye geçme seçeneği sunulur.
+   ============================================================ */
+let gameQuestions = [];
+let gameIndex = 0;
+let gameCorrectCount = 0;
+let gameAnswers = [];
+let currentLevel = 1;
+const WRONG_LIMIT = 3; // bu sayıya ULAŞILIRSA seviye tekrar edilmeli
+
+function levelQuestionCount(level){
+  return 10 + 5 * (level - 1); // 1→10, 2→15, 3→20, ...
+}
+
+function shuffleArray(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+// Genel amaçlı: verilen liste/karşı-liste ve hedef basamak sayısına göre
+// TEK anlamlı bir kod üretir (DE için 5 hane, NL için 4 hane).
+function generateCodeFromLists(list, otherList, totalLen){
+  const scoreOf = h => (h.rangeCertain ? 1 : 0) + (h.partial ? 0 : 1);
+  for(let attempt = 0; attempt < 200; attempt++){
+    const r = list[Math.floor(Math.random()*list.length)];
+    const ex = expandRange(r);
+    if(ex.len > totalLen) continue;
+    const prefixNum = ex.start + Math.floor(Math.random()*(ex.end-ex.start+1));
+    let prefixStr = String(prefixNum);
+    while(prefixStr.length < ex.len) prefixStr = '0'+prefixStr;
+    let code = prefixStr;
+    while(code.length < totalLen) code += Math.floor(Math.random()*10);
+    const targetHits = matchAgainst(list, code);
+    const otherHits = matchAgainst(otherList, code);
+    const targetScore = targetHits.reduce((m,h)=>Math.max(m,scoreOf(h)),0);
+    const otherScore = otherHits.reduce((m,h)=>Math.max(m,scoreOf(h)),0);
+    if(targetHits.length > 0 && targetScore > otherScore){
+      return code;
+    }
+  }
+  return null;
+}
+
+function generateGameCode(city, country){
+  const key = country === 'NL' ? 'nl' : 'domestic';
+  const len = country === 'NL' ? 4 : 5;
+  const otherCity = city === 'koln' ? 'herne' : 'koln';
+  const list = DATA[city][key];
+  const otherList = DATA[otherCity][key];
+  return generateCodeFromLists(list, otherList, len);
+}
+
+const BLANKET_COUNTRIES = ['DK','FI','SE','WW']; // hepsi Herne'ye — DATA.herne.blanketCountries ile aynı
+
+// n adet "tüm ülke" sorusu için ülke seçer; 4'ten fazla istenirse
+// listeyi tekrar tekrar karıştırıp kullanır (art arda aynı ülke gelmemeye çalışır).
+function pickBlanketCountries(n){
+  const result = [];
+  let pool = [];
+  while(result.length < n){
+    if(pool.length === 0){
+      pool = shuffleArray(BLANKET_COUNTRIES.slice());
+      if(result.length && pool[0] === result[result.length-1] && pool.length > 1){
+        [pool[0], pool[1]] = [pool[1], pool[0]];
+      }
+    }
+    result.push(pool.shift());
+  }
+  return result;
+}
+
+function buildGameQuestions(n){
+  // Oran: ~%60 DE, ~%20 NL, ~%20 tüm-ülke — Köln/Herne kendi içinde yarı yarıya.
+  let deCount = Math.round(n * 0.6);
+  let nlCount = Math.round(n * 0.2);
+  let blanketCount = n - deCount - nlCount;
+  if(blanketCount < 0){ blanketCount = 0; nlCount = n - deCount; }
+
+  const deKolnCount = Math.ceil(deCount / 2);
+  const deHerneCount = deCount - deKolnCount;
+  const nlKolnCount = Math.ceil(nlCount / 2);
+  const nlHerneCount = nlCount - nlKolnCount;
+
+  const plan = [];
+  for(let i=0;i<deKolnCount;i++) plan.push({ type:'code', country:'DE', city:'koln' });
+  for(let i=0;i<deHerneCount;i++) plan.push({ type:'code', country:'DE', city:'herne' });
+  for(let i=0;i<nlKolnCount;i++) plan.push({ type:'code', country:'NL', city:'koln' });
+  for(let i=0;i<nlHerneCount;i++) plan.push({ type:'code', country:'NL', city:'herne' });
+  for(let i=0;i<blanketCount;i++) plan.push({ type:'blanket' });
+
+  const blanketPicks = pickBlanketCountries(blanketCount);
+  let blanketIdx = 0;
+
+  const qs = [];
+  plan.forEach(item=>{
+    if(item.type === 'blanket'){
+      const country = blanketPicks[blanketIdx++];
+      qs.push({ kind:'blanket', country, answer:'herne' });
+    } else {
+      const code = generateGameCode(item.city, item.country);
+      if(code) qs.push({ kind:'code', country:item.country, code, answer:item.city });
+    }
+  });
+
+  // Üretilemeyen (nadir) kod varsa DE listesinden yedekle tamamla.
+  let guard = 0;
+  while(qs.length < n && guard < 400){
+    guard++;
+    const city = Math.random() < 0.5 ? 'koln' : 'herne';
+    const code = generateGameCode(city, 'DE');
+    if(code) qs.push({ kind:'code', country:'DE', code, answer:city });
+  }
+
+  return shuffleArray(qs); // "karışık olacak" isteğini garanti eder.
+}
+
+function openGame(){
+  document.getElementById('gameOverlay').classList.add('show');
+  showGameIntro();
+}
+function closeGame(){
+  document.getElementById('gameOverlay').classList.remove('show');
+}
+function showGameIntro(){
+  const L = TR_TEXT[currentLang].game;
+  const count = levelQuestionCount(currentLevel);
+  document.getElementById('gameIntro').style.display = '';
+  document.getElementById('gamePlay').style.display = 'none';
+  document.getElementById('gameSummary').style.display = 'none';
+  document.getElementById('gameLevelTagIntro').textContent = L.levelLabel(currentLevel, count);
+  document.getElementById('gameIntroTitle').textContent = L.introTitle;
+  document.getElementById('gameIntroText').textContent = L.introText(count);
+  document.getElementById('gameStartBtn').textContent = L.startBtn;
+}
+
+function startGame(){
+  gameQuestions = buildGameQuestions(levelQuestionCount(currentLevel));
+  gameIndex = 0;
+  gameCorrectCount = 0;
+  gameAnswers = [];
+  document.getElementById('gameIntro').style.display = 'none';
+  document.getElementById('gameSummary').style.display = 'none';
+  document.getElementById('gamePlay').style.display = '';
+  renderGameQuestion();
+}
+
+// Bir soru için gösterilecek ülke etiketi ve ana (kod/ülke adı) metni üretir.
+function gameQuestionDisplay(q){
+  const countryName = TR_TEXT[currentLang].countries[q.country];
+  if(q.kind === 'blanket'){
+    return { tag: countryName, main: countryName, isText: true };
+  }
+  return { tag: countryName, main: q.code, isText: false };
+}
+
+function renderGameQuestion(){
+  const L = TR_TEXT[currentLang].game;
+  const q = gameQuestions[gameIndex];
+  const disp = gameQuestionDisplay(q);
+  document.getElementById('gameProgress').textContent = L.questionLabel(gameIndex+1, gameQuestions.length);
+  document.getElementById('gameCountryTag').textContent = disp.tag;
+  const codeEl = document.getElementById('gameCode');
+  codeEl.textContent = disp.main;
+  codeEl.className = 'gameCode' + (disp.isText ? ' text' : '');
+  document.getElementById('choiceKoln').textContent = L.kolnBtn;
+  document.getElementById('choiceHerne').textContent = L.herneBtn;
+  document.getElementById('choiceKoln').disabled = false;
+  document.getElementById('choiceHerne').disabled = false;
+  const fb = document.getElementById('gameFeedback');
+  fb.style.display = 'none';
+  fb.className = 'gameFeedback';
+  document.getElementById('gameNextBtn').style.display = 'none';
+}
+
+function answerGame(chosen){
+  const L = TR_TEXT[currentLang].game;
+  const q = gameQuestions[gameIndex];
+  const isCorrect = chosen === q.answer;
+  if(isCorrect) gameCorrectCount++;
+  gameAnswers.push({ q, chosen, correct: isCorrect });
+  document.getElementById('choiceKoln').disabled = true;
+  document.getElementById('choiceHerne').disabled = true;
+  const fb = document.getElementById('gameFeedback');
+  const answerCityName = q.answer === 'koln' ? L.kolnBtn : L.herneBtn;
+  fb.style.display = 'block';
+  fb.className = 'gameFeedback ' + (isCorrect ? 'correct' : 'wrong');
+  fb.textContent = isCorrect ? L.correct : L.wrong(answerCityName);
+  const nextBtn = document.getElementById('gameNextBtn');
+  nextBtn.style.display = '';
+  nextBtn.textContent = (gameIndex === gameQuestions.length-1) ? L.finishBtn : L.nextBtn;
+}
+
+function nextGameStep(){
+  if(gameIndex === gameQuestions.length-1){
+    showGameSummary();
+  } else {
+    gameIndex++;
+    renderGameQuestion();
+  }
+}
+
+function showGameSummary(){
+  const L = TR_TEXT[currentLang].game;
+  const wrongCount = gameQuestions.length - gameCorrectCount;
+  const passed = wrongCount < WRONG_LIMIT;
+
+  document.getElementById('gamePlay').style.display = 'none';
+  document.getElementById('gameSummary').style.display = '';
+  document.getElementById('gameLevelTagSummary').textContent = L.levelLabel(currentLevel, gameQuestions.length);
+  document.getElementById('summaryTitleEl').textContent = L.summaryTitle;
+  document.getElementById('summaryTextEl').textContent = L.summaryText(gameCorrectCount, gameQuestions.length);
+
+  const statusEl = document.getElementById('passStatus');
+  statusEl.className = 'passStatus ' + (passed ? 'pass' : 'fail');
+  statusEl.textContent = passed ? L.passMsg : L.failMsg;
+
+  const retryBtn = document.getElementById('retryBtn');
+  const nextLevelBtn = document.getElementById('nextLevelBtn');
+  retryBtn.textContent = L.retryBtn;
+  if(passed){
+    // 0-2 yanlış: hem tekrar et hem sonraki seviyeye geç seçenekleri.
+    nextLevelBtn.style.display = '';
+    nextLevelBtn.textContent = L.nextLevelBtn(currentLevel + 1);
+  } else {
+    // 3+ yanlış: otomatik olarak sadece tekrar etme seçeneği — bir sonraki
+    // seviyeye ilerleme YOK, sınav sonunda yeni teste geçilmiyor.
+    nextLevelBtn.style.display = 'none';
+  }
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
+  gameAnswers.forEach((a, idx)=>{
+    const item = document.createElement('div');
+    item.className = 'reviewItem ' + (a.correct ? 'correct' : 'wrong');
+    const answerCityName = a.q.answer === 'koln' ? L.kolnBtn : L.herneBtn;
+    const disp = gameQuestionDisplay(a.q);
+    const rCode = document.createElement('span');
+    rCode.className = 'rCode';
+    rCode.textContent = (idx+1) + '. ' + disp.main + ' (' + disp.tag + ')';
+    const rResult = document.createElement('span');
+    rResult.className = 'rResult';
+    rResult.textContent = a.correct ? L.reviewCorrect : L.reviewWrong(answerCityName);
+    item.appendChild(rCode);
+    item.appendChild(rResult);
+    list.appendChild(item);
+  });
+}
+
+function retryLevel(){
+  // Aynı seviyeyi (aynı soru sayısıyla) yeni rastgele sorularla tekrar başlat.
+  startGame();
+}
+
+function goToNextLevel(){
+  currentLevel++;
+  startGame();
+}
+
+function refreshGameTexts(){
+  // Oyun açıkken dil değiştirilirse ekrandaki metinleri günceller
+  // (skor/soru ilerlemesi korunur, sadece diller değişir).
+  if(!document.getElementById('gameOverlay').classList.contains('show')) return;
+  const L = TR_TEXT[currentLang].game;
+  if(document.getElementById('gameIntro').style.display !== 'none'){
+    showGameIntro();
+  } else if(document.getElementById('gamePlay').style.display !== 'none'){
+    const q = gameQuestions[gameIndex];
+    const disp = gameQuestionDisplay(q);
+    document.getElementById('gameProgress').textContent = L.questionLabel(gameIndex+1, gameQuestions.length);
+    document.getElementById('gameCountryTag').textContent = disp.tag;
+    const codeElRefresh = document.getElementById('gameCode');
+    codeElRefresh.textContent = disp.main;
+    codeElRefresh.className = 'gameCode' + (disp.isText ? ' text' : '');
+    document.getElementById('choiceKoln').textContent = L.kolnBtn;
+    document.getElementById('choiceHerne').textContent = L.herneBtn;
+    if(document.getElementById('gameFeedback').style.display !== 'none'){
+      const a = gameAnswers[gameAnswers.length-1];
+      const answerCityName = a.q.answer === 'koln' ? L.kolnBtn : L.herneBtn;
+      document.getElementById('gameFeedback').textContent = a.correct ? L.correct : L.wrong(answerCityName);
+      document.getElementById('gameNextBtn').textContent = (gameIndex === gameQuestions.length-1) ? L.finishBtn : L.nextBtn;
+    }
+  } else if(document.getElementById('gameSummary').style.display !== 'none'){
+    showGameSummary();
+  }
+}
+
+document.getElementById('gameLaunchBtn').addEventListener('click', openGame);
+document.getElementById('gameCloseBtn').addEventListener('click', closeGame);
+document.getElementById('gameStartBtn').addEventListener('click', startGame);
+document.getElementById('choiceKoln').addEventListener('click', ()=>answerGame('koln'));
+document.getElementById('choiceHerne').addEventListener('click', ()=>answerGame('herne'));
+document.getElementById('gameNextBtn').addEventListener('click', nextGameStep);
+document.getElementById('retryBtn').addEventListener('click', retryLevel);
+document.getElementById('nextLevelBtn').addEventListener('click', goToNextLevel);
 
 let selectedCountry = 'DE';
 document.getElementById('countryRow').addEventListener('click', (e)=>{
