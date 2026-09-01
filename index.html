@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sevkiyat Yönlendirme — Wiesbaden Çıkışlı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EEE3;
+    --ink:#221D16;
+    --kraft:#6E4A30;
+    --kraft-dark:#4A3020;
+    --koln:#B8402C;
+    --herne:#1F4E5F;
+    --neutral:#8A8272;
+    --line:#D9D0BC;
+    --card:#FBF8F1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  .wrap{max-width:480px;margin:0 auto;padding:22px 18px 0;}
+
+  header{padding:6px 2px 22px;}
+  .tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    letter-spacing:.02em;
+    color:var(--kraft);
+    background:rgba(110,74,48,.1);
+    border:1px solid rgba(110,74,48,.25);
+    border-radius:3px;
+    padding:3px 8px;
+    margin-bottom:10px;
+  }
+  h1{
+    font-size:25px;
+    line-height:1.22;
+    margin:0 0 6px;
+    font-weight:700;
+    letter-spacing:-.01em;
+  }
+  header p{
+    margin:0;
+    font-size:14px;
+    line-height:1.5;
+    color:#514A3D;
+    max-width:38ch;
+  }
+
+  .originStrip{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:16px 0 26px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--neutral);
+  }
+  .originStrip .dot{width:5px;height:5px;border-radius:50%;background:var(--neutral);}
+
+  /* --- dil seçici --- */
+  .langRow{
+    display:flex;
+    gap:6px;
+    margin-bottom:16px;
+  }
+  .langBtn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    font-weight:600;
+    padding:6px 12px;
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:20px;
+    color:var(--neutral);
+    cursor:pointer;
+  }
+  .langBtn.active{
+    border-color:var(--kraft);
+    color:var(--kraft);
+    background:rgba(110,74,48,.09);
+  }
+
+  /* --- ülke seçimi: fiziksel etiketlerdeki gibi köşeli, damga hissi --- */
+  .countryRow{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-bottom:18px;
+  }
+  .countryBtn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    font-weight:600;
+    padding:11px 6px;
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:6px;
+    color:var(--ink);
+    cursor:pointer;
+    transition:border-color .15s, background .15s;
+  }
+  .countryBtn.active{
+    border-color:var(--kraft);
+    background:rgba(110,74,48,.09);
+  }
+  .countryBtn .full{display:block;font-family:'IBM Plex Sans',sans-serif;font-weight:400;font-size:10.5px;color:var(--neutral);margin-top:2px;}
+
+  .inputCard{
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:18px;
+  }
+  .inputCard label{
+    display:block;
+    font-size:12px;
+    color:var(--neutral);
+    margin-bottom:8px;
+  }
+  .inputRow{display:flex;gap:8px;}
+  #plzInput{
+    flex:1;
+    min-width:0;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:22px;
+    font-weight:600;
+    letter-spacing:.02em;
+    padding:10px 12px;
+    border:1.5px solid var(--line);
+    border-radius:7px;
+    background:#fff;
+    color:var(--ink);
+  }
+  #plzInput:focus{outline:none;border-color:var(--kraft);}
+  #checkBtn{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:0 20px;
+    background:var(--kraft);
+    color:#fff;
+    border:none;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  #checkBtn:active{background:var(--kraft-dark);}
+  .blanketNote{
+    font-size:12px;
+    color:var(--neutral);
+    margin-top:10px;
+    line-height:1.5;
+  }
+
+  /* --- sonuç: fotoğraflardaki kahverengi klasör etiketinden ilham --- */
+  #result{display:none;}
+  #result.show{display:block;}
+  .resultLabel{
+    border-radius:10px;
+    overflow:hidden;
+    border:1.5px solid var(--line);
+    margin-bottom:14px;
+  }
+  .resultLabel .band{
+    padding:9px 16px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.03em;
+    color:#fff;
+  }
+  .resultLabel .band.koln{background:var(--koln);}
+  .resultLabel .band.herne{background:var(--herne);}
+  .resultLabel .band.none{background:var(--neutral);}
+  .resultLabel .body{background:#fff;padding:20px 16px 18px;}
+  .destName{
+    font-size:34px;
+    font-weight:700;
+    letter-spacing:-.01em;
+    margin:0 0 4px;
+  }
+  .destName.koln{color:var(--koln);}
+  .destName.herne{color:var(--herne);}
+  .destName.none{color:var(--neutral);}
+  .destSub{font-size:13px;color:#665F52;margin:0;}
+  .tierChips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+  .tierChip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:4px 9px;
+    border-radius:20px;
+    background:#F0ECE1;
+    border:1px solid var(--line);
+    color:#514A3D;
+  }
+  .rangeLine{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    color:var(--neutral);
+    margin-top:3px;
+  }
+
+  .warnBox{
+    background:#FBF0E4;
+    border:1.5px solid #E3B879;
+    border-radius:8px;
+    padding:12px 14px;
+    font-size:12.5px;
+    line-height:1.55;
+    color:#6B4A16;
+    margin-bottom:14px;
+  }
+  .warnBox b{display:block;margin-bottom:3px;}
+
+  footer{
+    margin-top:30px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-size:11.5px;
+    line-height:1.6;
+    color:var(--neutral);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="langRow" id="langRow">
+    <button class="langBtn active" data-lang="tr">TR</button>
+    <button class="langBtn" data-lang="en">EN</button>
+    <button class="langBtn" data-lang="de">DE</button>
+  </div>
+
+  <header>
+    <span class="tag" id="tagLabel">DE FLOW 260831 · Wiesbaden çıkışlı</span>
+    <h1 id="titleH1">Bu kod nereye gidiyor?</h1>
+    <p id="subP">Sevkiyat merkezinden fotoğraflanan yönlendirme etiketlerine göre — posta kodunu gir, Köln mü Herne mi (ya da başka bir hedef mi) hemen görün.</p>
+  </header>
+
+  <div class="originStrip">
+    <span class="dot"></span> <span id="originText">Kaynak: Wiesbaden &nbsp;·&nbsp; Hedefler: Köln (N) / Herne (N) &nbsp;·&nbsp; eff. 31.08.2026</span>
+  </div>
+
+  <div class="countryRow" id="countryRow">
+    <button class="countryBtn active" data-c="DE">DE<span class="full" data-country-label="DE">Almanya</span></button>
+    <button class="countryBtn" data-c="NL">NL<span class="full" data-country-label="NL">Hollanda</span></button>
+    <button class="countryBtn" data-c="DK">DK<span class="full" data-country-label="DK">Danimarka</span></button>
+    <button class="countryBtn" data-c="FI">FI<span class="full" data-country-label="FI">Finlandiya</span></button>
+    <button class="countryBtn" data-c="SE">SE<span class="full" data-country-label="SE">İsveç</span></button>
+    <button class="countryBtn" data-c="WW">WW<span class="full" data-country-label="WW">Diğer/Dünya</span></button>
+  </div>
+
+  <div class="inputCard">
+    <label id="inputLabel">Posta kodu (PLZ)</label>
+    <div class="inputRow">
+      <input type="text" id="plzInput" inputmode="numeric" placeholder="örn. 50667" autocomplete="off">
+      <button id="checkBtn" onclick="checkCode()">Kontrol Et</button>
+    </div>
+    <div class="blanketNote" id="blanketNote"></div>
+  </div>
+
+  <div id="result">
+    <div class="resultLabel">
+      <div class="band" id="resultBand"></div>
+      <div class="body">
+        <p class="destName" id="destName"></p>
+        <p class="destSub" id="destSub"></p>
+        <div class="tierChips" id="tierChips"></div>
+      </div>
+    </div>
+    <div class="warnBox" id="warnBox" style="display:none;"></div>
+  </div>
+
+  <footer id="footerText">
+    Bu araç, sevkiyat merkezindeki fiziksel Köln (N) ve Herne (N) yönlendirme
+    etiketlerinin fotoğraflarından el ile aktarılmıştır — resmî bir sistem
+    değildir. Kısaltılmış aralık gösterimleri ("480 - 48268" gibi) en olası
+    şekilde yorumlanmıştır. Gerçek bir sevkiyat kararı vermeden önce, özellikle
+    aşağıda "iki listede birden eşleşti" uyarısı çıkan kodlarda, etikete veya
+    sorumlu kişiye tekrar bakılması önerilir.
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   ÇEVİRİLER — TR / EN / DE. Statik metinler doğrudan burada, sonuç
+   ekranındaki dinamik metinler ise checkCode() içinden bu tabloya
+   erişen küçük fonksiyonlarla üretiliyor. Servis seviyesi adları
+   (Standard, Express, Express Plus vb.) etiketlerdeki orijinal Almanca
+   terimler olduğu için HİÇBİR dilde çevrilmiyor — bilerek aynı kalıyor.
+   ============================================================ */
+const TR_TEXT = {
+  tr: {
+    tag: 'DE FLOW 260831 · Wiesbaden çıkışlı',
+    title: 'Bu kod nereye gidiyor?',
+    sub: 'Sevkiyat merkezinden fotoğraflanan yönlendirme etiketlerine göre — posta kodunu gir, Köln mü Herne mi (ya da başka bir hedef mi) hemen görün.',
+    origin: 'Kaynak: Wiesbaden &nbsp;·&nbsp; Hedefler: Köln (N) / Herne (N) &nbsp;·&nbsp; eff. 31.08.2026',
+    countries: { DE:'Almanya', NL:'Hollanda', DK:'Danimarka', FI:'Finlandiya', SE:'İsveç', WW:'Diğer/Dünya' },
+    inputLabelDefault: 'Posta kodu (PLZ)',
+    inputLabelNL: 'Hollanda posta kodu',
+    placeholderDefault: 'örn. 50667',
+    placeholderNL: 'örn. 3841',
+    checkBtn: 'Kontrol Et',
+    showBtn: 'Sonucu Göster',
+    blanketNote: (name)=> name + ' için tek tek posta kodu ayrımı yok — etikette tüm ülke tek kalemde listeleniyor.',
+    footer: 'Bu araç, sevkiyat merkezindeki fiziksel Köln (N) ve Herne (N) yönlendirme etiketlerinin fotoğraflarından el ile aktarılmıştır — resmî bir sistem değildir. Kısaltılmış aralık gösterimleri ("480 - 48268" gibi) en olası şekilde yorumlanmıştır. Gerçek bir sevkiyat kararı vermeden önce, özellikle aşağıda "iki listede birden eşleşti" uyarısı çıkan kodlarda, etikete veya sorumlu kişiye tekrar bakılması önerilir.',
+    bandTarget: 'HEDEF', bandTargetGuess: 'HEDEF (TAHMİNİ)', bandAmbiguous: 'BELİRSİZ', bandNone: 'SONUÇ',
+    kolnName: 'Köln', herneName: 'Herne', noMatchName: 'Eşleşme yok',
+    kolnSub: 'DE05109N1 · eff. 31.08.2026', herneSub: 'DE00949N1 · eff. 31.08.2026',
+    noMatchSub: 'Bu kod ne Köln ne de Herne listesinde bulundu — etiketlerde eksik olabilir ya da farklı bir merkeze gidiyor olabilir.',
+    ambBothCertainSub: 'Bu kod hem Köln hem Herne aralıklarına aynı kesinlikte düşüyor — muhtemelen servis seviyesine (Standard / Express / Express Plus) göre ayrım var.',
+    ambBothWeakSub: 'Bu kod, aynı derecede zayıf/tahmini eşleşmelerle hem Köln hem Herne\'ye düşüyor.',
+    warnBothCertainTitle: 'Emin olmadan gönderme',
+    warnBothCertainBody: 'Bu kod iki hedefte de listeleniyor. Muhtemel sebep, aynı aralığın farklı servis seviyeleri (Standard / Express / Express Plus) için ayrı ayrı Köln ve Herne\'ye paylaştırılmış olması. Doğru hedefi seçmeden önce sevkiyatın servis türünü ve fiziksel etiketi kontrol et.',
+    warnBothWeakTitle: 'Güvenilir değil',
+    warnBothWeakBody: 'Bu kod için hem Köln hem Herne tarafındaki eşleşmeler zayıf (kısmi kod ve/veya kısaltılmış aralık). Daha uzun/tam kod yazarsan ya da etikete bakarsan daha net sonuç alırsın.',
+    warnNoteTitle: 'Not',
+    warnNoteBody: (otherCity, range, thisCity) => 'Bu kod aynı zamanda ' + otherCity + '\'nin bir aralığına ("' + range + '") daha zayıf bir eşleşmeyle de düşüyor, ama ' + thisCity + ' tarafındaki eşleşme daha güçlü olduğu için ' + thisCity + ' daha güvenilir cevap.',
+    warnGuessTitle: 'Tahmini eşleşme',
+    warnGuessBody: (range) => 'Bu kod, kısmi yazılmış ya da etikette kısaltılmış bir aralığa ("' + range + '") göre eşleşti. Kesin emin olmak için tam kodu yaz ya da etikete bak.',
+    chipGuess: ' (kısmi kod)', chipUncertain: ' (tahmini)',
+    wholeCountry: '(tüm ülke)'
+  },
+  en: {
+    tag: 'DE FLOW 260831 · Departing Wiesbaden',
+    title: 'Where is this code going?',
+    sub: 'Based on photographed routing labels from the sorting center — enter a postcode to instantly see whether it goes to Köln, Herne, or somewhere else.',
+    origin: 'Origin: Wiesbaden &nbsp;·&nbsp; Destinations: Köln (N) / Herne (N) &nbsp;·&nbsp; eff. 31.08.2026',
+    countries: { DE:'Germany', NL:'Netherlands', DK:'Denmark', FI:'Finland', SE:'Sweden', WW:'Other/World' },
+    inputLabelDefault: 'Postcode (PLZ)',
+    inputLabelNL: 'Dutch postcode',
+    placeholderDefault: 'e.g. 50667',
+    placeholderNL: 'e.g. 3841',
+    checkBtn: 'Check',
+    showBtn: 'Show Result',
+    blanketNote: (name)=> 'There\'s no per-postcode breakdown for ' + name + ' — the label lists the whole country as one entry.',
+    footer: 'This tool was manually transcribed from photos of the physical Köln (N) and Herne (N) routing labels at the sorting center — it is not an official system. Abbreviated range notations (like "480 - 48268") have been interpreted as plausibly as possible. Before making an actual shipping decision — especially for codes that trigger the "matched both lists" warning below — please double-check the physical label or the responsible person.',
+    bandTarget: 'DESTINATION', bandTargetGuess: 'DESTINATION (ESTIMATED)', bandAmbiguous: 'AMBIGUOUS', bandNone: 'RESULT',
+    kolnName: 'Köln', herneName: 'Herne', noMatchName: 'No match',
+    kolnSub: 'DE05109N1 · eff. 31.08.2026', herneSub: 'DE00949N1 · eff. 31.08.2026',
+    noMatchSub: 'This code was not found on either the Köln or Herne list — it may be missing from the labels, or it may go to a different center.',
+    ambBothCertainSub: 'This code falls into both Köln\'s and Herne\'s ranges with equal certainty — likely split by service level (Standard / Express / Express Plus).',
+    ambBothWeakSub: 'This code falls into both Köln and Herne with equally weak/estimated matches.',
+    warnBothCertainTitle: 'Don\'t send without checking',
+    warnBothCertainBody: 'This code is listed under both destinations. The likely reason is that the same range is split between Köln and Herne by service level (Standard / Express / Express Plus). Check the shipment\'s service type and the physical label before choosing a destination.',
+    warnBothWeakTitle: 'Not reliable',
+    warnBothWeakBody: 'Both the Köln and Herne matches for this code are weak (partial code and/or an abbreviated range). Type a longer/full code, or check the label, for a clearer answer.',
+    warnNoteTitle: 'Note',
+    warnNoteBody: (otherCity, range, thisCity) => 'This code also falls into a ' + otherCity + ' range ("' + range + '") with a weaker match, but the ' + thisCity + ' match is stronger, so ' + thisCity + ' is the more reliable answer.',
+    warnGuessTitle: 'Estimated match',
+    warnGuessBody: (range) => 'This code matched via a partially typed code and/or an abbreviated range on the label ("' + range + '"). Type the full code, or check the label, to be certain.',
+    chipGuess: ' (partial code)', chipUncertain: ' (estimated)',
+    wholeCountry: '(whole country)'
+  },
+  de: {
+    tag: 'DE FLOW 260831 · Abgang Wiesbaden',
+    title: 'Wohin geht dieser Code?',
+    sub: 'Basierend auf fotografierten Verteiletiketten aus dem Sortierzentrum — gib eine Postleitzahl ein und sieh sofort, ob sie nach Köln, Herne oder woanders hin geht.',
+    origin: 'Herkunft: Wiesbaden &nbsp;·&nbsp; Ziele: Köln (N) / Herne (N) &nbsp;·&nbsp; eff. 31.08.2026',
+    countries: { DE:'Deutschland', NL:'Niederlande', DK:'Dänemark', FI:'Finnland', SE:'Schweden', WW:'Sonstige/Welt' },
+    inputLabelDefault: 'Postleitzahl (PLZ)',
+    inputLabelNL: 'Niederländische Postleitzahl',
+    placeholderDefault: 'z. B. 50667',
+    placeholderNL: 'z. B. 3841',
+    checkBtn: 'Prüfen',
+    showBtn: 'Ergebnis anzeigen',
+    blanketNote: (name)=> 'Für ' + name + ' gibt es keine Aufschlüsselung nach Postleitzahl — auf dem Etikett steht das ganze Land als ein Eintrag.',
+    footer: 'Dieses Tool wurde von Hand aus Fotos der physischen Köln (N)- und Herne (N)-Verteiletiketten im Sortierzentrum übertragen — es ist kein offizielles System. Abgekürzte Bereichsangaben (wie "480 - 48268") wurden nach bestem Ermessen interpretiert. Bevor du eine echte Versandentscheidung triffst — besonders bei Codes, die unten die Warnung "in beiden Listen gefunden" auslösen — prüfe bitte noch einmal das Etikett oder frage die zuständige Person.',
+    bandTarget: 'ZIEL', bandTargetGuess: 'ZIEL (GESCHÄTZT)', bandAmbiguous: 'UNKLAR', bandNone: 'ERGEBNIS',
+    kolnName: 'Köln', herneName: 'Herne', noMatchName: 'Keine Übereinstimmung',
+    kolnSub: 'DE05109N1 · eff. 31.08.2026', herneSub: 'DE00949N1 · eff. 31.08.2026',
+    noMatchSub: 'Dieser Code wurde weder auf der Köln- noch auf der Herne-Liste gefunden — er könnte auf den Etiketten fehlen oder zu einem anderen Zentrum gehen.',
+    ambBothCertainSub: 'Dieser Code fällt mit gleicher Sicherheit sowohl in Kölns als auch in Hernes Bereich — vermutlich nach Serviceart (Standard / Express / Express Plus) aufgeteilt.',
+    ambBothWeakSub: 'Dieser Code fällt mit gleich schwachen/geschätzten Treffern sowohl auf Köln als auch auf Herne.',
+    warnBothCertainTitle: 'Nicht ungeprüft verschicken',
+    warnBothCertainBody: 'Dieser Code steht auf beiden Ziel-Listen. Wahrscheinlicher Grund: derselbe Bereich ist je nach Serviceart (Standard / Express / Express Plus) auf Köln und Herne aufgeteilt. Prüfe die Serviceart der Sendung und das physische Etikett, bevor du dich für ein Ziel entscheidest.',
+    warnBothWeakTitle: 'Nicht zuverlässig',
+    warnBothWeakBody: 'Sowohl der Köln- als auch der Herne-Treffer für diesen Code sind schwach (Teilcode und/oder abgekürzter Bereich). Für ein klareres Ergebnis einen längeren/vollständigen Code eingeben oder das Etikett prüfen.',
+    warnNoteTitle: 'Hinweis',
+    warnNoteBody: (otherCity, range, thisCity) => 'Dieser Code fällt mit einem schwächeren Treffer auch in einen ' + otherCity + '-Bereich ("' + range + '"), aber der ' + thisCity + '-Treffer ist stärker, daher ist ' + thisCity + ' die zuverlässigere Antwort.',
+    warnGuessTitle: 'Geschätzter Treffer',
+    warnGuessBody: (range) => 'Dieser Code wurde über einen teilweise eingegebenen Code und/oder einen abgekürzten Bereich auf dem Etikett ("' + range + '") zugeordnet. Für Gewissheit den vollständigen Code eingeben oder das Etikett prüfen.',
+    chipGuess: ' (Teilcode)', chipUncertain: ' (geschätzt)',
+    wholeCountry: '(ganzes Land)'
+  }
+};
+let currentLang = 'tr';
+
+function applyStaticText(){
+  const L = TR_TEXT[currentLang];
+  document.documentElement.lang = currentLang;
+  document.getElementById('tagLabel').textContent = L.tag;
+  document.getElementById('titleH1').textContent = L.title;
+  document.getElementById('subP').textContent = L.sub;
+  document.getElementById('originText').innerHTML = L.origin;
+  document.querySelectorAll('[data-country-label]').forEach(el=>{
+    el.textContent = L.countries[el.dataset.countryLabel];
+  });
+  document.getElementById('footerText').textContent = L.footer;
+  updateInputForCountry();
+}
+
+document.getElementById('langRow').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.langBtn');
+  if(!btn) return;
+  document.querySelectorAll('.langBtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentLang = btn.dataset.lang;
+  applyStaticText();
+  // Ekranda zaten bir sonuç varsa, dil değişince onu da güncelle.
+  if(document.getElementById('result').classList.contains('show')) checkCode();
+});
+
+/* ============================================================
+   VERİ — 4 fotoğraftan el ile aktarılan aralıklar.
+   Kısaltma kuralı: "A - B" biçimindeki bir aralıkta A ve B farklı
+   uzunluktaysa, KISA olan sağdan sıfırla uzatılıp UZUN olanın
+   basamak sayısına getirilir (örn. "480 - 48268" → 48000-48268,
+   "2965 - 328" → 2965-3280). Bu, etiketlerdeki iç tutarlılığa göre
+   çıkarılmış bir yorumdur.
+   ============================================================ */
+function R(a,b,tier){ return {a:String(a), b:b===undefined?String(a):String(b), tier}; }
+
+const DATA = {
+  koln: {
+    domestic: [
+      R('2920','2936','Standard/Express'), R('2965','328','Standard/Express'),
+      R('332','338','Standard/Express'),   R('418',undefined,'Standard/Express'),
+      R('463','465','Standard/Express'),   R('474','476','Standard/Express'),
+      R('480','48268','Standard/Express'), R('48283','48366','Standard/Express'),
+      R('4863','4879','Standard/Express'), R('5000','5152','Standard/Express'),
+      R('5175','529','Standard/Express'),  R('5392','540','Standard/Express'),
+      R('592','5934','Standard/Express'),  R('59369','5939','Standard/Express')
+    ],
+    nl: [
+      R('384','385','Standard'), R('388',undefined,'Standard'), R('47','52','Standard'),
+      R('534','66','Standard'),  R('68','77','Standard'),       R('79','81','Standard'),
+      R('826','829','Standard')
+    ]
+  },
+  herne: {
+    domestic: [
+      // Express
+      ...['200-212','2141-229','24540-24576','24590-24594','24611-24616','24623-24624',
+          '24628-24630','24632-24634','24640-24643','24647-24699','253-255','26-28',
+          '330-331','344-34508','34517-34519','3765-388','440-453','456-459'
+      ].map(x=>{const[a,b]=x.split('-');return R(a,b,'Express');}),
+      R('462',undefined,'Express'),
+      ...['48269-48282','48367-4862'].map(x=>{const[a,b]=x.split('-');return R(a,b,'Express');}),
+      R('49',undefined,'Express'), R('58454',undefined,'Express'),
+      ...['590-591','5935-59368','594-596'].map(x=>{const[a,b]=x.split('-');return R(a,b,'Express');}),
+      R('599',undefined,'Express'),
+      // Express Plus
+      ...['200-212','2141-229','24540-24576','24590-24594','24611-24616','24623-24624',
+          '24628-24630','24632-24634','24640-24643','24647-24699','253-255','260-2936',
+          '2965-338','344-34508','34517-34519','3765-388','40-41','4256-4257',
+          '4275-42781','440-454','456-5152','5175-529','5392-540','5820-5823'
+      ].map(x=>{const[a,b]=x.split('-');return R(a,b,'Express Plus');}),
+      R('58454',undefined,'Express Plus'),
+      R('5846','599','Express Plus'),
+      // Standard
+      ...['168-28','2937-2964','330-331','344-34508','34517-34519','3765-396',
+          '440-453','456-459'].map(x=>{const[a,b]=x.split('-');return R(a,b,'Standard');}),
+      R('462',undefined,'Standard'),
+      ...['48269-48282','48367-4862'].map(x=>{const[a,b]=x.split('-');return R(a,b,'Standard');}),
+      R('49',undefined,'Standard'), R('58454',undefined,'Standard'),
+      ...['590-591','5935-59368','594-596'].map(x=>{const[a,b]=x.split('-');return R(a,b,'Standard');}),
+      R('599',undefined,'Standard')
+    ],
+    nl: [
+      R('100','383','Standard'), R('386','387','Standard'), R('389','46','Standard'),
+      R('530','533','Standard'), R('67',undefined,'Standard'), R('78',undefined,'Standard'),
+      R('820','825','Standard'), R('83','99','Standard')
+    ],
+    blanketCountries: ['DK','FI','SE','WW'] // Dänemark, Finnland, Schweden, WW Economy — tamamı Herne'ye, Standart seviyede
+  }
+};
+
+function expandRange(r){
+  let a = r.a, b = r.b;
+  const certain = (a.length === b.length);
+  if(!certain){
+    const maxLen = Math.max(a.length, b.length);
+    if(a.length < maxLen) a = a.padEnd(maxLen, '0');
+    else b = b.padEnd(maxLen, '0');
+  }
+  return { start: parseInt(a,10), end: parseInt(b,10), len: a.length, tier: r.tier, certain };
+}
+
+function matchAgainst(list, digits){
+  const hits = [];
+  const L = digits.length;
+  list.forEach(r=>{
+    const ex = expandRange(r);
+    let isMatch = false;
+    let partial = false;
+    if(L >= ex.len){
+      // Kod, aralığın basamak sayısına ya eşit ya da daha uzun — normal
+      // önek karşılaştırması (ör. gerçek 5 haneli PLZ, 4 haneli bir
+      // aralığa karşı kontrol ediliyor).
+      const prefix = parseInt(digits.slice(0, ex.len), 10);
+      isMatch = prefix >= ex.start && prefix <= ex.end;
+    } else if(L > 0){
+      // KÖK NEDEN DÜZELTMESİ: kullanıcı aralığın basamak sayısından DAHA
+      // AZ rakam yazdıysa (örn. "292" yazdı ama aralık 4 haneli "2920"),
+      // eskiden bu satır tamamen atlanıyordu ve hiçbir sonuç çıkmıyordu —
+      // kullanıcı sona sıfır eklemek zorunda kalıyordu. Artık yazılan
+      // kısmi rakamların TAMAMLANABİLECEĞİ tüm sayı aralığını hesaplayıp
+      // ("292" → 2920-2929 olabilir) bunun etiketteki aralıkla ÇAKIŞIP
+      // çakışmadığına bakıyoruz — çakışıyorsa eşleşme sayılıyor.
+      const factor = Math.pow(10, ex.len - L);
+      const lo = parseInt(digits, 10) * factor;
+      const hi = lo + factor - 1;
+      isMatch = lo <= ex.end && hi >= ex.start;
+      partial = true;
+    }
+    if(isMatch){
+      hits.push({
+        tier: ex.tier,
+        range: r.a + (r.a===r.b?'':' - '+r.b),
+        rangeCertain: ex.certain, // aralığın KENDİSİ kesin miydi (basamak sayıları eşleşiyor muydu) — kısmi girişten BAĞIMSIZ olarak saklanıyor
+        partial,
+        len: ex.len
+      });
+    }
+  });
+  return hits;
+}
+
+let selectedCountry = 'DE';
+document.getElementById('countryRow').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.countryBtn');
+  if(!btn) return;
+  document.querySelectorAll('.countryBtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedCountry = btn.dataset.c;
+  updateInputForCountry();
+  document.getElementById('result').classList.remove('show');
+});
+
+function updateInputForCountry(){
+  const L = TR_TEXT[currentLang];
+  const input = document.getElementById('plzInput');
+  const label = document.getElementById('inputLabel');
+  const note = document.getElementById('blanketNote');
+  const btn = document.getElementById('checkBtn');
+  if(selectedCountry === 'DK' || selectedCountry === 'FI' || selectedCountry === 'SE' || selectedCountry === 'WW'){
+    input.style.display = 'none';
+    btn.textContent = L.showBtn;
+    note.textContent = L.blanketNote(L.countries[selectedCountry]);
+  } else {
+    input.style.display = '';
+    btn.textContent = L.checkBtn;
+    input.value = '';
+    input.placeholder = selectedCountry === 'NL' ? L.placeholderNL : L.placeholderDefault;
+    label.textContent = selectedCountry === 'NL' ? L.inputLabelNL : L.inputLabelDefault;
+    note.textContent = '';
+    input.focus();
+  }
+}
+
+function checkCode(){
+  const L = TR_TEXT[currentLang];
+  const resultEl = document.getElementById('result');
+  const band = document.getElementById('resultBand');
+  const name = document.getElementById('destName');
+  const sub = document.getElementById('destSub');
+  const chips = document.getElementById('tierChips');
+  const warn = document.getElementById('warnBox');
+  chips.innerHTML = '';
+  warn.style.display = 'none';
+
+  let kolnHits = [], herneHits = [];
+
+  if(selectedCountry === 'DK' || selectedCountry === 'FI' || selectedCountry === 'SE' || selectedCountry === 'WW'){
+    herneHits = [{ tier:'Standard', range: L.countries[selectedCountry] + ' ' + L.wholeCountry, rangeCertain:true, partial:false, len:0 }];
+  } else {
+    const raw = document.getElementById('plzInput').value.trim();
+    const digits = raw.replace(/\D/g,'');
+    if(!digits){
+      document.getElementById('plzInput').focus();
+      return;
+    }
+    if(selectedCountry === 'NL'){
+      kolnHits = matchAgainst(DATA.koln.nl, digits);
+      herneHits = matchAgainst(DATA.herne.nl, digits);
+    } else {
+      kolnHits = matchAgainst(DATA.koln.domestic, digits);
+      herneHits = matchAgainst(DATA.herne.domestic, digits);
+    }
+  }
+
+  resultEl.classList.add('show');
+
+  // GÜVEN SKORU: her eşleşmeye 0-2 arası bir puan veriyoruz —
+  // (aralığın kendisi kesin mi: +1) + (yazdığın kod kısmi değil mi: +1).
+  // KÖK NEDEN DÜZELTMESİ: eskiden "kesin/tahmini" ayrımı sadece aralığın
+  // kendisine bakıyordu; kısmi kod girişini (örn. "292") eklediğimde her
+  // iki taraf da otomatik "tahmini" sayılıp gereksiz yere "Belirsiz"
+  // çıkıyordu — oysa Köln tarafı hâlâ açık ara daha güçlü bir eşleşmeydi.
+  // Artık iki tarafın EN YÜKSEK puanlı eşleşmesi karşılaştırılıyor; hangisi
+  // daha yüksekse o net cevap olarak gösteriliyor, sadece puanlar EŞİTSE
+  // gerçek bir belirsizlik var demektir.
+  const scoreOf = h => (h.rangeCertain ? 1 : 0) + (h.partial ? 0 : 1);
+  const kolnScore = kolnHits.reduce((m,h)=>Math.max(m, scoreOf(h)), 0);
+  const herneScore = herneHits.reduce((m,h)=>Math.max(m, scoreOf(h)), 0);
+  const kolnAny = kolnHits.length > 0;
+  const herneAny = herneHits.length > 0;
+
+  const renderChips = (hits, cityLabel)=>{
+    hits.forEach(h=>{
+      const c = document.createElement('span');
+      c.className = 'tierChip';
+      const tag = h.partial ? L.chipGuess : (h.rangeCertain ? '' : L.chipUncertain);
+      c.textContent = (cityLabel ? cityLabel+' · ' : '') + h.tier + ' · ' + h.range + tag;
+      chips.appendChild(c);
+    });
+  };
+
+  if(!kolnAny && !herneAny){
+    band.className = 'band none';
+    band.textContent = L.bandNone;
+    name.className = 'destName none';
+    name.textContent = L.noMatchName;
+    sub.textContent = L.noMatchSub;
+  } else if(kolnScore === herneScore){
+    // Puanlar eşit — gerçek bir belirsizlik: ya iki tarafta da eşit
+    // güçte kesin çakışma var, ya da ikisi de aynı derecede zayıf/tahmini.
+    band.className = 'band none';
+    band.textContent = L.bandAmbiguous;
+    name.className = 'destName none';
+    name.textContent = currentLang === 'tr' ? 'Belirsiz' : (currentLang === 'de' ? 'Unklar' : 'Ambiguous');
+    sub.textContent = kolnScore === 2 ? L.ambBothCertainSub : L.ambBothWeakSub;
+    renderChips(kolnHits, L.kolnName); renderChips(herneHits, L.herneName);
+    warn.style.display = 'block';
+    warn.innerHTML = kolnScore === 2
+      ? '<b>' + L.warnBothCertainTitle + '</b>' + L.warnBothCertainBody
+      : '<b>' + L.warnBothWeakTitle + '</b>' + L.warnBothWeakBody;
+  } else if(kolnScore > herneScore){
+    band.className = 'band koln';
+    band.textContent = kolnScore === 2 ? L.bandTarget : L.bandTargetGuess;
+    name.className = 'destName koln';
+    name.textContent = L.kolnName;
+    sub.textContent = L.kolnSub;
+    renderChips(kolnHits);
+    if(herneAny){
+      warn.style.display = 'block';
+      warn.innerHTML = '<b>' + L.warnNoteTitle + '</b>' + L.warnNoteBody(L.herneName, herneHits[0].range, L.kolnName);
+    } else if(kolnScore < 2){
+      warn.style.display = 'block';
+      warn.innerHTML = '<b>' + L.warnGuessTitle + '</b>' + L.warnGuessBody(kolnHits[0].range);
+    }
+  } else {
+    band.className = 'band herne';
+    band.textContent = herneScore === 2 ? L.bandTarget : L.bandTargetGuess;
+    name.className = 'destName herne';
+    name.textContent = L.herneName;
+    sub.textContent = L.herneSub;
+    renderChips(herneHits);
+    if(kolnAny){
+      warn.style.display = 'block';
+      warn.innerHTML = '<b>' + L.warnNoteTitle + '</b>' + L.warnNoteBody(L.kolnName, kolnHits[0].range, L.herneName);
+    } else if(herneScore < 2){
+      warn.style.display = 'block';
+      warn.innerHTML = '<b>' + L.warnGuessTitle + '</b>' + L.warnGuessBody(herneHits[0].range);
+    }
+  }
+}
+
+document.getElementById('plzInput').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') checkCode();
+});
+applyStaticText();
+</script>
+</body>
+</html>
