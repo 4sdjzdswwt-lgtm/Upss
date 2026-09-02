@@ -1134,7 +1134,19 @@ let gameQuestions = [];
 let gameIndex = 0;
 let gameCorrectCount = 0;
 let gameAnswers = [];
-let currentLevel = 1;
+const GAME_LEVEL_KEY = 'routeflow_game_level_v1';
+function loadSavedLevel(){
+  try{
+    const raw = localStorage.getItem(GAME_LEVEL_KEY);
+    const n = parseInt(raw, 10);
+    if(!isNaN(n) && n >= 1) return n;
+  }catch(e){}
+  return 1;
+}
+function saveLevel(level){
+  try{ localStorage.setItem(GAME_LEVEL_KEY, String(level)); }catch(e){}
+}
+let currentLevel = loadSavedLevel();
 const WRONG_LIMIT = 3; // bu sayıya ULAŞILIRSA seviye tekrar edilmeli
 
 function levelQuestionCount(level){
@@ -1385,6 +1397,7 @@ function retryLevel(){
 
 function goToNextLevel(){
   currentLevel++;
+  saveLevel(currentLevel);
   startGame();
 }
 
@@ -1700,9 +1713,6 @@ document.getElementById('streakBadge').addEventListener('click', ()=>{
 const streakResult = updateStreakForToday();
 lastStreakData = streakResult.data;
 renderStreakBadge(streakResult.data);
-if(streakResult.isNewDay){
-  showStreakSplash(streakResult.data);
-}
 </script>
 </body>
 </html>
