@@ -356,19 +356,24 @@
     margin:2px 0 14px;
   }
   .gameCountryTag{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11.5px;
-    font-weight:600;
-    letter-spacing:.04em;
-    color:var(--kraft);
-    background:rgba(110,74,48,.1);
-    border:1px solid rgba(110,74,48,.25);
-    border-radius:20px;
-    padding:3px 10px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:17px;
+    font-weight:800;
+    letter-spacing:.01em;
+    color:#fff;
+    background:linear-gradient(135deg, var(--kraft) 0%, var(--kraft-dark) 100%);
+    border:none;
+    border-radius:24px;
+    padding:9px 20px;
     width:fit-content;
-    margin:0 auto 8px;
+    margin:0 auto 14px;
     text-align:center;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    box-shadow:0 3px 10px rgba(110,74,48,.35);
   }
+  .gameCountryTag .flag{font-size:20px;line-height:1;}
   .gameCode{
     font-family:'IBM Plex Mono',monospace;
     font-size:42px;
@@ -590,7 +595,7 @@
     .gameOverlay{ background:rgba(0,0,0,.65); }
     .gameCard{ background:var(--paper); }
     .gameClose{ background:#221C15; color:var(--neutral); border-color:var(--line); }
-    .gameLevelTag, .gameCountryTag{ background:rgba(210,164,110,.14); border-color:rgba(210,164,110,.3); color:var(--kraft); }
+    .gameLevelTag{ background:rgba(210,164,110,.14); border-color:rgba(210,164,110,.3); color:var(--kraft); }
     .langBtn, .countryBtn{ background:#221C15; }
     .countryBtn.active{ background:rgba(210,164,110,.12); }
     .langBtn.active{ background:rgba(210,164,110,.12); }
@@ -966,11 +971,25 @@ const TR_TEXT = {
     }
   }
 };
-let currentLang = 'tr';
+const LANG_KEY = 'routeflow_lang_v1';
+function loadSavedLang(){
+  try{
+    const saved = localStorage.getItem(LANG_KEY);
+    if(saved && TR_TEXT[saved]) return saved;
+  }catch(e){}
+  return 'tr';
+}
+function saveLang(lang){
+  try{ localStorage.setItem(LANG_KEY, lang); }catch(e){}
+}
+let currentLang = loadSavedLang();
 
 function applyStaticText(){
   const L = TR_TEXT[currentLang];
   document.documentElement.lang = currentLang;
+  document.querySelectorAll('.langBtn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.lang === currentLang);
+  });
   document.getElementById('brandTagline').textContent = L.brandTagline;
   document.getElementById('tagLabel').textContent = L.tag;
   document.getElementById('titleH1').textContent = L.title;
@@ -1000,6 +1019,7 @@ document.getElementById('langRow').addEventListener('click', (e)=>{
   document.querySelectorAll('.langBtn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   currentLang = btn.dataset.lang;
+  saveLang(currentLang);
   applyStaticText();
   // Ekranda zaten bir sonuç varsa, dil değişince onu da güncelle.
   if(document.getElementById('result').classList.contains('show')) checkCode();
@@ -1289,12 +1309,20 @@ function startGame(){
 }
 
 // Bir soru için gösterilecek ülke etiketi ve ana (kod/ülke adı) metni üretir.
+const COUNTRY_FLAGS = { DE:'🇩🇪', NL:'🇳🇱', DK:'🇩🇰', FI:'🇫🇮', SE:'🇸🇪', WW:'🌍' };
+
 function gameQuestionDisplay(q){
   const countryName = TR_TEXT[currentLang].countries[q.country];
+  const flag = COUNTRY_FLAGS[q.country] || '';
   if(q.kind === 'blanket'){
-    return { tag: countryName, main: countryName, isText: true };
+    return { tag: countryName, flag, main: countryName, isText: true };
   }
-  return { tag: countryName, main: q.code, isText: false };
+  return { tag: countryName, flag, main: q.code, isText: false };
+}
+
+function setCountryTag(disp){
+  const el = document.getElementById('gameCountryTag');
+  el.innerHTML = '<span class="flag">' + disp.flag + '</span><span>' + disp.tag + '</span>';
 }
 
 function renderGameQuestion(){
@@ -1302,7 +1330,7 @@ function renderGameQuestion(){
   const q = gameQuestions[gameIndex];
   const disp = gameQuestionDisplay(q);
   document.getElementById('gameProgress').textContent = L.questionLabel(gameIndex+1, gameQuestions.length);
-  document.getElementById('gameCountryTag').textContent = disp.tag;
+  setCountryTag(disp);
   const codeEl = document.getElementById('gameCode');
   codeEl.textContent = disp.main;
   codeEl.className = 'gameCode' + (disp.isText ? ' text' : '');
@@ -1412,7 +1440,7 @@ function refreshGameTexts(){
     const q = gameQuestions[gameIndex];
     const disp = gameQuestionDisplay(q);
     document.getElementById('gameProgress').textContent = L.questionLabel(gameIndex+1, gameQuestions.length);
-    document.getElementById('gameCountryTag').textContent = disp.tag;
+    setCountryTag(disp);
     const codeElRefresh = document.getElementById('gameCode');
     codeElRefresh.textContent = disp.main;
     codeElRefresh.className = 'gameCode' + (disp.isText ? ' text' : '');
