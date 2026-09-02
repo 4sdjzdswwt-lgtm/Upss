@@ -464,6 +464,207 @@
     line-height:1.4;
   }
   /* ============================================================
+     KAMERAYLA TARA — posta kodunu OCR ile okuyan kamera ekranı.
+     ============================================================ */
+  .scanBtn{
+    width:100%;
+    margin-top:10px;
+    background:#fff;
+    color:var(--kraft);
+    border:1.5px solid var(--kraft);
+    border-radius:7px;
+    padding:11px;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+  }
+  .scanBtn:active{background:rgba(110,74,48,.08);}
+
+  .scanOverlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:120;
+    background:#000;
+    flex-direction:column;
+  }
+  .scanOverlay.show{display:flex;}
+  .scanTopBar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 14px calc(env(safe-area-inset-top,0px) + 14px) 14px;
+    padding-top:14px;
+  }
+  .scanTitle{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    color:#fff;
+  }
+  .scanCloseBtn{
+    width:34px;height:34px;
+    border-radius:50%;
+    border:1.5px solid rgba(255,255,255,.35);
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    font-size:17px;
+    line-height:1;
+    cursor:pointer;
+  }
+  .scanVideoWrap{
+    position:relative;
+    flex:1;
+    min-height:0;
+    overflow:hidden;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #scanVideo{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .scanGuideBox{
+    position:absolute;
+    left:10%;
+    right:10%;
+    top:50%;
+    transform:translateY(-50%);
+    height:15%;
+    border:2.5px dashed #FFC65C;
+    border-radius:12px;
+    box-shadow:0 0 0 2000px rgba(0,0,0,.45);
+    pointer-events:none;
+  }
+  .scanHint{
+    position:absolute;
+    left:16px;
+    right:16px;
+    bottom:16px;
+    text-align:center;
+    color:#fff;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    text-shadow:0 1px 4px rgba(0,0,0,.6);
+  }
+  .scanControls{
+    display:flex;
+    justify-content:center;
+    padding:22px 20px calc(env(safe-area-inset-bottom,0px) + 22px) 20px;
+    background:#000;
+  }
+  .scanCaptureBtn{
+    width:72px;height:72px;
+    border-radius:50%;
+    background:#fff;
+    border:5px solid rgba(255,255,255,.35);
+    cursor:pointer;
+  }
+  .scanCaptureBtn:active{background:#e8e2d5;}
+
+  .scanProcessing{
+    display:none;
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    z-index:5;
+  }
+  .scanProcessing.show{display:flex;}
+  .scanSpinner{
+    width:38px;height:38px;
+    border-radius:50%;
+    border:4px solid rgba(255,255,255,.25);
+    border-top-color:#FFC65C;
+    animation:scanSpin .8s linear infinite;
+  }
+  @keyframes scanSpin{to{transform:rotate(360deg);}}
+  #scanProcessingText{
+    color:#fff;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:13.5px;
+    font-weight:600;
+  }
+
+  .scanResults{
+    display:none;
+    position:absolute;
+    left:0;right:0;bottom:0;
+    background:var(--paper);
+    border-radius:18px 18px 0 0;
+    padding:20px 20px calc(env(safe-area-inset-bottom,0px) + 20px) 20px;
+    z-index:6;
+  }
+  .scanResults.show{display:block;}
+  .scanResultsTitle{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:700;
+    font-size:15.5px;
+    color:var(--ink);
+    margin-bottom:14px;
+  }
+  .scanCandidates{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-bottom:16px;
+  }
+  .scanCandidateBtn{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:700;
+    font-size:17px;
+    padding:11px 18px;
+    background:var(--card);
+    border:1.5px solid var(--kraft);
+    color:var(--ink);
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .scanCandidateBtn:active{background:rgba(110,74,48,.1);}
+  .scanRetryBtn{
+    width:100%;
+    font-family:'IBM Plex Sans',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:12px;
+    background:var(--kraft);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .scanError{
+    display:none;
+    position:absolute;
+    left:0;right:0;bottom:0;
+    background:var(--paper);
+    border-radius:18px 18px 0 0;
+    padding:20px 20px calc(env(safe-area-inset-bottom,0px) + 20px) 20px;
+    z-index:6;
+    text-align:center;
+  }
+  .scanError.show{display:block;}
+  #scanErrorText{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:14px;
+    color:var(--ink);
+    line-height:1.5;
+    margin-bottom:16px;
+  }
+  /* ============================================================
      GÜNLÜK SERİ (streak) — açılış ekranı, rozet ve haftalık görünüm.
      ============================================================ */
   .streakBadge{
@@ -582,6 +783,10 @@
     #checkBtn{ background:var(--kraft); color:#17130F; }
     #checkBtn:active{ background:var(--kraft-dark); }
     .gameSecondaryBtn{ background:#221C15; color:var(--kraft); border-color:var(--kraft); }
+    .scanBtn{ background:#221C15; color:var(--kraft); border-color:var(--kraft); }
+    .scanResults{ background:var(--paper); }
+    .scanError{ background:var(--paper); }
+    .scanCandidateBtn{ background:#221C15; }
     .gameSecondaryBtn:active{ background:#2E2617; }
     .gamePrimaryBtn{ color:#17130F; }
     .choiceBtn{ background:#221C15; color:var(--ink); border-color:var(--line); }
@@ -658,6 +863,7 @@
       <input type="text" id="plzInput" inputmode="numeric" placeholder="örn. 50667" autocomplete="off">
       <button id="checkBtn" onclick="checkCode()">Kontrol Et</button>
     </div>
+    <button class="scanBtn" id="scanBtn">📷 <span id="scanBtnText">Kamerayla Tara</span></button>
     <div class="blanketNote" id="blanketNote"></div>
   </div>
 
@@ -744,6 +950,42 @@
   <button class="streakContinueBtn" id="streakContinueBtn"></button>
 </div>
 
+<div class="scanOverlay" id="scanOverlay">
+  <div class="scanTopBar">
+    <div style="width:34px;"></div>
+    <div class="scanTitle" id="scanTitle"></div>
+    <button class="scanCloseBtn" id="scanCloseBtn">×</button>
+  </div>
+
+  <div class="scanVideoWrap" id="scanVideoWrap">
+    <video id="scanVideo" autoplay playsinline muted></video>
+    <div class="scanGuideBox" id="scanGuideBox"></div>
+    <div class="scanHint" id="scanHint"></div>
+  </div>
+
+  <div class="scanControls" id="scanControls">
+    <button class="scanCaptureBtn" id="scanCaptureBtn" aria-label="Çek"></button>
+  </div>
+
+  <div class="scanProcessing" id="scanProcessing">
+    <div class="scanSpinner"></div>
+    <div id="scanProcessingText"></div>
+  </div>
+
+  <div class="scanResults" id="scanResults">
+    <div class="scanResultsTitle" id="scanResultsTitle"></div>
+    <div class="scanCandidates" id="scanCandidates"></div>
+    <button class="scanRetryBtn" id="scanRetryBtn"></button>
+  </div>
+
+  <div class="scanError" id="scanError">
+    <div id="scanErrorText"></div>
+    <button class="scanRetryBtn" id="scanErrorCloseBtn"></button>
+  </div>
+
+  <canvas id="scanCanvas" style="display:none;"></canvas>
+</div>
+
 <script>
 /* ============================================================
    ÇEVİRİLER — TR / EN / DE. Statik metinler doğrudan burada, sonuç
@@ -822,6 +1064,18 @@ const TR_TEXT = {
         return months + ' aylık seri';
       },
       continueBtn: 'Devam Et'
+    },
+    scan: {
+      btnLabel: 'Kamerayla Tara',
+      title: 'Posta Kodunu Tara',
+      hint: 'Posta kodunu çerçevenin içine hizala',
+      processing: 'Okunuyor…',
+      resultsTitle: 'Bulunan sayılar — doğrusuna dokun',
+      retryBtn: 'Tekrar Çek',
+      noMatchText: 'Net bir posta kodu okunamadı. Işığı düzelt, kodu çerçevenin içine hizala ve tekrar dene.',
+      cameraErrorText: 'Kameraya erişilemedi. Tarayıcı izinlerini kontrol et ya da posta kodunu elle gir.',
+      ocrErrorText: 'Tarama motoru yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.',
+      closeBtn: 'Kapat'
     }
   },
   en: {
@@ -895,6 +1149,18 @@ const TR_TEXT = {
         return s + ' streak';
       },
       continueBtn: 'Continue'
+    },
+    scan: {
+      btnLabel: 'Scan with Camera',
+      title: 'Scan Postal Code',
+      hint: 'Align the postal code inside the frame',
+      processing: 'Reading…',
+      resultsTitle: 'Numbers found — tap the right one',
+      retryBtn: 'Retry',
+      noMatchText: 'Couldn\'t read a clear postal code. Improve the lighting, align the code inside the frame, and try again.',
+      cameraErrorText: 'Couldn\'t access the camera. Check your browser permissions or enter the postal code manually.',
+      ocrErrorText: 'The scanning engine failed to load. Check your internet connection and try again.',
+      closeBtn: 'Close'
     }
   },
   de: {
@@ -968,6 +1234,18 @@ const TR_TEXT = {
         return s + ' Serie';
       },
       continueBtn: 'Weiter'
+    },
+    scan: {
+      btnLabel: 'Mit Kamera scannen',
+      title: 'Postleitzahl scannen',
+      hint: 'Postleitzahl im Rahmen ausrichten',
+      processing: 'Wird gelesen…',
+      resultsTitle: 'Gefundene Zahlen — richtige antippen',
+      retryBtn: 'Erneut versuchen',
+      noMatchText: 'Konnte keine eindeutige Postleitzahl lesen. Licht verbessern, Code im Rahmen ausrichten und erneut versuchen.',
+      cameraErrorText: 'Kein Kamerazugriff möglich. Browserberechtigungen prüfen oder Postleitzahl manuell eingeben.',
+      ocrErrorText: 'Die Scan-Engine konnte nicht geladen werden. Internetverbindung prüfen und erneut versuchen.',
+      closeBtn: 'Schließen'
     }
   }
 };
@@ -1000,6 +1278,7 @@ function applyStaticText(){
   });
   document.getElementById('footerText').textContent = L.footer;
   document.getElementById('gameLaunchBtnText').textContent = L.game.launchBtn;
+  document.getElementById('scanBtnText').textContent = L.scan.btnLabel;
   updateInputForCountry();
   refreshGameTexts();
   refreshStreakTexts();
@@ -1169,6 +1448,30 @@ function saveLevel(level){
 let currentLevel = loadSavedLevel();
 const WRONG_LIMIT = 3; // bu sayıya ULAŞILIRSA seviye tekrar edilmeli
 
+// Devam eden oyun oturumunu (sorular, index, cevaplar, aşama) kaydeder ki
+// sayfa yenilense veya oyun kapatılıp tekrar açılsa bile kaldığı yerden
+// devam edebilsin.
+const GAME_SESSION_KEY = 'routeflow_game_session_v1';
+function saveGameSession(phase){
+  try{
+    localStorage.setItem(GAME_SESSION_KEY, JSON.stringify({
+      level: currentLevel,
+      questions: gameQuestions,
+      index: gameIndex,
+      correctCount: gameCorrectCount,
+      answers: gameAnswers,
+      phase: phase
+    }));
+  }catch(e){}
+}
+function loadGameSession(){
+  try{
+    const raw = localStorage.getItem(GAME_SESSION_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return null;
+}
+
 function levelQuestionCount(level){
   return 10 + 5 * (level - 1); // 1→10, 2→15, 3→20, ...
 }
@@ -1280,7 +1583,29 @@ function buildGameQuestions(n){
 
 function openGame(){
   document.getElementById('gameOverlay').classList.add('show');
-  showGameIntro();
+  const session = loadGameSession();
+  if(session && session.level === currentLevel && Array.isArray(session.questions) && session.questions.length){
+    gameQuestions = session.questions;
+    gameIndex = session.index;
+    gameCorrectCount = session.correctCount;
+    gameAnswers = session.answers;
+    document.getElementById('gameIntro').style.display = 'none';
+    if(session.phase === 'summary'){
+      document.getElementById('gamePlay').style.display = 'none';
+      showGameSummary();
+    } else {
+      document.getElementById('gameSummary').style.display = 'none';
+      document.getElementById('gamePlay').style.display = '';
+      renderGameQuestion();
+      // Bu soru zaten cevaplanmışsa (yenileme cevaptan sonra, "Sonraki"
+      // tıklanmadan önce olduysa) geri bildirimi de aynen göster.
+      if(gameAnswers.length === gameIndex + 1){
+        renderAnswerFeedback(gameAnswers[gameIndex]);
+      }
+    }
+  } else {
+    showGameIntro();
+  }
 }
 function closeGame(){
   document.getElementById('gameOverlay').classList.remove('show');
@@ -1306,6 +1631,7 @@ function startGame(){
   document.getElementById('gameSummary').style.display = 'none';
   document.getElementById('gamePlay').style.display = '';
   renderGameQuestion();
+  saveGameSession('playing');
 }
 
 // Bir soru için gösterilecek ülke etiketi ve ana (kod/ülke adı) metni üretir.
@@ -1344,12 +1670,10 @@ function renderGameQuestion(){
   document.getElementById('gameNextBtn').style.display = 'none';
 }
 
-function answerGame(chosen){
+function renderAnswerFeedback(answerEntry){
   const L = TR_TEXT[currentLang].game;
-  const q = gameQuestions[gameIndex];
-  const isCorrect = chosen === q.answer;
-  if(isCorrect) gameCorrectCount++;
-  gameAnswers.push({ q, chosen, correct: isCorrect });
+  const q = answerEntry.q;
+  const isCorrect = answerEntry.correct;
   document.getElementById('choiceKoln').disabled = true;
   document.getElementById('choiceHerne').disabled = true;
   const fb = document.getElementById('gameFeedback');
@@ -1362,12 +1686,23 @@ function answerGame(chosen){
   nextBtn.textContent = (gameIndex === gameQuestions.length-1) ? L.finishBtn : L.nextBtn;
 }
 
+function answerGame(chosen){
+  const q = gameQuestions[gameIndex];
+  const isCorrect = chosen === q.answer;
+  if(isCorrect) gameCorrectCount++;
+  const entry = { q, chosen, correct: isCorrect };
+  gameAnswers.push(entry);
+  renderAnswerFeedback(entry);
+  saveGameSession('playing');
+}
+
 function nextGameStep(){
   if(gameIndex === gameQuestions.length-1){
     showGameSummary();
   } else {
     gameIndex++;
     renderGameQuestion();
+    saveGameSession('playing');
   }
 }
 
@@ -1416,6 +1751,8 @@ function showGameSummary(){
     item.appendChild(rResult);
     list.appendChild(item);
   });
+
+  saveGameSession('summary');
 }
 
 function retryLevel(){
@@ -1741,6 +2078,185 @@ document.getElementById('streakBadge').addEventListener('click', ()=>{
 const streakResult = updateStreakForToday();
 lastStreakData = streakResult.data;
 renderStreakBadge(streakResult.data);
+
+/* ============================================================
+   KAMERAYLA TARA — canlı kamera görüntüsünden OCR ile posta kodunu
+   okur (barkodun/MaxiCode'un kendisini değil, etiket üzerindeki
+   yazılı rakamları okur). Tesseract.js CDN'den yalnızca ilk
+   kullanımda, ihtiyaç anında yüklenir.
+   ============================================================ */
+let scanStream = null;
+let scanCameraFailed = false;
+let tesseractLoadPromise = null;
+
+function loadTesseract(){
+  if(window.Tesseract) return Promise.resolve();
+  if(tesseractLoadPromise) return tesseractLoadPromise;
+  tesseractLoadPromise = new Promise((resolve, reject)=>{
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('tesseract-load-failed'));
+    document.head.appendChild(script);
+  });
+  return tesseractLoadPromise;
+}
+
+function scanSetState(state){
+  // state: 'video' | 'processing' | 'results' | 'error'
+  document.getElementById('scanProcessing').classList.toggle('show', state === 'processing');
+  document.getElementById('scanResults').classList.toggle('show', state === 'results');
+  document.getElementById('scanError').classList.toggle('show', state === 'error');
+  document.getElementById('scanControls').style.display = (state === 'video') ? '' : 'none';
+}
+
+async function openScanner(){
+  const L = TR_TEXT[currentLang].scan;
+  document.getElementById('scanTitle').textContent = L.title;
+  document.getElementById('scanHint').textContent = L.hint;
+  document.getElementById('scanProcessingText').textContent = L.processing;
+  document.getElementById('scanResultsTitle').textContent = L.resultsTitle;
+  document.getElementById('scanRetryBtn').textContent = L.retryBtn;
+  document.getElementById('scanErrorCloseBtn').textContent = L.closeBtn;
+
+  scanCameraFailed = false;
+  document.getElementById('scanOverlay').classList.add('show');
+  scanSetState('video');
+
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    scanCameraFailed = true;
+    document.getElementById('scanErrorText').textContent = L.cameraErrorText;
+    scanSetState('error');
+    return;
+  }
+
+  try{
+    scanStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' } },
+      audio: false
+    });
+    document.getElementById('scanVideo').srcObject = scanStream;
+  }catch(e){
+    scanCameraFailed = true;
+    document.getElementById('scanErrorText').textContent = L.cameraErrorText;
+    scanSetState('error');
+  }
+}
+
+function stopScanStream(){
+  if(scanStream){
+    scanStream.getTracks().forEach(t => t.stop());
+    scanStream = null;
+  }
+}
+
+function closeScanner(){
+  stopScanStream();
+  document.getElementById('scanOverlay').classList.remove('show');
+}
+
+function scanErrorAction(){
+  if(scanCameraFailed){
+    closeScanner();
+  } else {
+    scanSetState('video');
+  }
+}
+
+async function captureAndRead(){
+  const L = TR_TEXT[currentLang].scan;
+  const video = document.getElementById('scanVideo');
+  const guideBox = document.getElementById('scanGuideBox');
+  const videoWrap = document.getElementById('scanVideoWrap');
+
+  if(!video.videoWidth) return;
+
+  scanSetState('processing');
+
+  // Ekrandaki kılavuz kutunun video üzerindeki gerçek karşılığını hesapla
+  // (object-fit:cover ölçeklemesini hesaba katarak).
+  const wrapRect = videoWrap.getBoundingClientRect();
+  const boxRect = guideBox.getBoundingClientRect();
+
+  const scale = Math.max(wrapRect.width / video.videoWidth, wrapRect.height / video.videoHeight);
+  const displayedW = video.videoWidth * scale;
+  const displayedH = video.videoHeight * scale;
+  const offsetX = (wrapRect.width - displayedW) / 2;
+  const offsetY = (wrapRect.height - displayedH) / 2;
+
+  const cropXDisp = (boxRect.left - wrapRect.left) - offsetX;
+  const cropYDisp = (boxRect.top - wrapRect.top) - offsetY;
+
+  const sx = Math.max(0, cropXDisp / scale);
+  const sy = Math.max(0, cropYDisp / scale);
+  const sw = Math.min(video.videoWidth - sx, boxRect.width / scale);
+  const sh = Math.min(video.videoHeight - sy, boxRect.height / scale);
+
+  const canvas = document.getElementById('scanCanvas');
+  const outScale = 3; // OCR doğruluğu için büyüt
+  canvas.width = Math.max(1, sw * outScale);
+  canvas.height = Math.max(1, sh * outScale);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+
+  try{
+    await loadTesseract();
+  }catch(e){
+    document.getElementById('scanErrorText').textContent = L.ocrErrorText;
+    scanSetState('error');
+    return;
+  }
+
+  try{
+    const { data } = await Tesseract.recognize(canvas, 'eng', {
+      tessedit_char_whitelist: '0123456789'
+    });
+    const text = data.text || '';
+    const matches = text.match(/\d{3,5}/g) || [];
+    const uniqueMatches = [...new Set(matches)];
+
+    const expectedLen = selectedCountry === 'NL' ? 4 : 5;
+    const exact = uniqueMatches.filter(m => m.length === expectedLen);
+
+    if(exact.length === 1){
+      applyScanResult(exact[0]);
+      return;
+    }
+
+    const candidates = uniqueMatches.filter(m => m.length >= 3);
+    if(candidates.length === 0){
+      document.getElementById('scanErrorText').textContent = L.noMatchText;
+      scanSetState('error');
+      return;
+    }
+
+    const list = document.getElementById('scanCandidates');
+    list.innerHTML = '';
+    candidates.forEach(code=>{
+      const btn = document.createElement('button');
+      btn.className = 'scanCandidateBtn';
+      btn.textContent = code;
+      btn.addEventListener('click', ()=> applyScanResult(code));
+      list.appendChild(btn);
+    });
+    scanSetState('results');
+  }catch(e){
+    document.getElementById('scanErrorText').textContent = L.noMatchText;
+    scanSetState('error');
+  }
+}
+
+function applyScanResult(code){
+  document.getElementById('plzInput').value = code;
+  closeScanner();
+  checkCode();
+}
+
+document.getElementById('scanBtn').addEventListener('click', openScanner);
+document.getElementById('scanCloseBtn').addEventListener('click', closeScanner);
+document.getElementById('scanCaptureBtn').addEventListener('click', captureAndRead);
+document.getElementById('scanRetryBtn').addEventListener('click', ()=> scanSetState('video'));
+document.getElementById('scanErrorCloseBtn').addEventListener('click', scanErrorAction);
 </script>
 </body>
 </html>
