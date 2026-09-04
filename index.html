@@ -2907,9 +2907,30 @@ function closeAllLists(){
   document.getElementById('allListsOverlay').classList.remove('show');
 }
 
+// Yazılan rakamların (digits) bir "a-b" aralığının GERÇEKTEN içine düşüp
+// düşmediğini kontrol eder — matchAgainst() ile aynı önek/kısmi mantığı,
+// ama tek bir aralık için ve arama ekranında kullanılmak üzere.
+function rangeContainsDigits(a, b, digits){
+  if(!digits) return false;
+  const ex = expandRange({ a, b });
+  const L = digits.length;
+  if(L >= ex.len){
+    const prefix = parseInt(digits.slice(0, ex.len), 10);
+    return prefix >= ex.start && prefix <= ex.end;
+  }
+  if(L > 0){
+    const factor = Math.pow(10, ex.len - L);
+    const lo = parseInt(digits, 10) * factor;
+    const hi = lo + factor - 1;
+    return lo <= ex.end && hi >= ex.start;
+  }
+  return false;
+}
+
 function renderAllLists(query){
   const L = TR_TEXT[currentLang].allLists;
   const q = (query || '').trim().toLowerCase();
+  const qDigits = (query || '').replace(/\D/g, '');
   const body = document.getElementById('allListsBody');
   body.innerHTML = '';
 
@@ -2930,7 +2951,10 @@ function renderAllLists(query){
     });
   });
   const deuMatches = q === '' ? deuEntries : deuEntries.filter(e =>
-    e.city.toLowerCase().includes(q) || e.code.includes(q) || e.plz.includes(q)
+    e.city.toLowerCase().includes(q) ||
+    e.code.includes(q) ||
+    e.plz.toLowerCase().includes(q) ||
+    (qDigits.length > 0 && (e.code.includes(qDigits) || e.plz.replace(/\D/g,'').includes(qDigits)))
   );
   if(deuMatches.length){
     anyMatch = true;
@@ -2970,7 +2994,16 @@ function renderAllLists(query){
       if(nameMatches){
         return { tier: g.tier, items: g.items, matchedItems: null };
       }
-      const matchedItems = g.items.filter(it => it.toLowerCase().includes(q));
+      const matchedItems = g.items.filter(it => {
+        if(it.toLowerCase().includes(q)) return true;
+        if(qDigits.length >= 2){
+          const parsed = parseListItem(it);
+          if(parsed && parsed.kind === 'plain'){
+            return rangeContainsDigits(parsed.a, parsed.b, qDigits);
+          }
+        }
+        return false;
+      });
       return matchedItems.length ? { tier: g.tier, items: g.items, matchedItems } : null;
     }).filter(Boolean);
 
