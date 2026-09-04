@@ -194,6 +194,10 @@
   .resultLabel .band.koln{background:var(--koln);}
   .resultLabel .band.herne{background:var(--herne);}
   .resultLabel .band.none{background:var(--neutral);}
+  .resultLabel .band.scankraft{background:var(--kraft);}
+  #scanDestResult{display:none;}
+  #scanDestResult.show{display:block;}
+  .destName.scankraft{color:var(--kraft);}
   .resultLabel .body{background:#fff;padding:20px 16px 18px;}
   .destName{
     font-size:34px;
@@ -709,11 +713,11 @@
   }
   .scanGuideBox{
     position:absolute;
-    left:10%;
-    right:10%;
+    left:6%;
+    right:6%;
     top:50%;
     transform:translateY(-50%);
-    height:15%;
+    height:52%;
     border:2.5px dashed #FFC65C;
     border-radius:12px;
     box-shadow:0 0 0 2000px rgba(0,0,0,.45);
@@ -1063,6 +1067,17 @@
     <div class="warnBox" id="warnBox" style="display:none;"></div>
   </div>
 
+  <div id="scanDestResult">
+    <div class="resultLabel">
+      <div class="band" id="scanDestBand"></div>
+      <div class="body">
+        <p class="destName" id="scanDestName"></p>
+        <p class="destSub" id="scanDestSub"></p>
+        <div class="tierChips" id="scanDestChips"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="gameOverlay" id="gameOverlay">
     <div class="gameCard">
       <button class="gameClose" id="gameCloseBtn">×</button>
@@ -1270,14 +1285,22 @@ const TR_TEXT = {
     scan: {
       btnLabel: 'Kamerayla Tara',
       title: 'Posta Kodunu Tara',
-      hint: 'Posta kodunu çerçevenin içine hizala',
+      hint: 'Etiketin posta kodu ve sıralama kodu bölümünü çerçeveye sığdır — ikisi de otomatik algılanır',
       processing: 'Okunuyor…',
       resultsTitle: 'Bulunan sayılar — doğrusuna dokun',
       retryBtn: 'Tekrar Çek',
       noMatchText: 'Net bir posta kodu okunamadı. Işığı düzelt, kodu çerçevenin içine hizala ve tekrar dene.',
       cameraErrorText: 'Kameraya erişilemedi. Tarayıcı izinlerini kontrol et ya da posta kodunu elle gir.',
       ocrErrorText: 'Tarama motoru yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.',
-      closeBtn: 'Kapat'
+      closeBtn: 'Kapat',
+      foundBand: 'HEDEF BULUNDU',
+      ambiguousBand: 'BİRDEN FAZLA HEDEF',
+      noDestFound: 'Listelerde bulunamadı',
+      noDestFoundSub: 'Bu kod şu anki referans listelerindeki hiçbir hedefle eşleşmedi. Yeni listeler eklendikçe tekrar denenebilir.',
+      deuFoundBand: 'SIRALAMA KODU EŞLEŞTİ',
+      deuSortSub: 'Bu sıralama kodu etiketin üzerinde yazıyor ve her zaman aynı şehre gider — posta kodu aralığından daha güvenilirdir.',
+      deuSortSubMulti: 'Bu sıralama kodu etiketin üzerinde yazıyor ve her zaman aynı dağıtım bölgesine (bu şehirlerden birine) gider — posta kodu aralığından daha güvenilirdir.',
+      deuExampleChip: (plz) => 'örn. PLZ ' + plz
     },
     allLists: {
       btnLabel: 'Tüm Listeler',
@@ -1285,7 +1308,9 @@ const TR_TEXT = {
       searchPlaceholder: 'Posta kodu veya şehir ara…',
       metaLine: (code,eff) => code + ' · eff. ' + eff,
       emptyText: 'Eşleşme bulunamadı.',
-      footerNote: 'Wiesbaden çıkışlı sevkiyat merkezindeki yönlendirme panolarından el ile aktarılmıştır. Bu liste sadece referans amaçlıdır, oyuna veya kontrol aracına dahil değildir. Eksik hedefler zamanla eklenecektir.'
+      footerNote: 'Wiesbaden çıkışlı sevkiyat merkezindeki yönlendirme panolarından el ile aktarılmıştır. Bu liste sadece referans amaçlıdır, oyuna veya kontrol aracına dahil değildir. Eksik hedefler zamanla eklenecektir.',
+      deuSectionTitle: 'Sıralama Kodları (DEU / NLD)',
+      deuSectionSub: 'Etiket üzerindeki kod — her zaman aynı şehre gider'
     }
   },
   en: {
@@ -1365,14 +1390,22 @@ const TR_TEXT = {
     scan: {
       btnLabel: 'Scan with Camera',
       title: 'Scan Postal Code',
-      hint: 'Align the postal code inside the frame',
+      hint: 'Fit both the postal code and the sort code in the frame — both get detected automatically',
       processing: 'Reading…',
       resultsTitle: 'Numbers found — tap the right one',
       retryBtn: 'Retry',
       noMatchText: 'Couldn\'t read a clear postal code. Improve the lighting, align the code inside the frame, and try again.',
       cameraErrorText: 'Couldn\'t access the camera. Check your browser permissions or enter the postal code manually.',
       ocrErrorText: 'The scanning engine failed to load. Check your internet connection and try again.',
-      closeBtn: 'Close'
+      closeBtn: 'Close',
+      foundBand: 'DESTINATION FOUND',
+      ambiguousBand: 'MULTIPLE DESTINATIONS',
+      noDestFound: 'Not found in the lists',
+      noDestFoundSub: 'This code didn\'t match any destination in the current reference lists. Try again once more lists are added.',
+      deuFoundBand: 'SORT CODE MATCHED',
+      deuSortSub: 'This sort code is printed on the label and always goes to the same city — more reliable than a range guess.',
+      deuSortSubMulti: 'This sort code is printed on the label and always goes to the same delivery region (one of these cities) — more reliable than a range guess.',
+      deuExampleChip: (plz) => 'e.g. PLZ ' + plz
     },
     allLists: {
       btnLabel: 'All Lists',
@@ -1380,7 +1413,9 @@ const TR_TEXT = {
       searchPlaceholder: 'Search postal code or city…',
       metaLine: (code,eff) => code + ' · eff. ' + eff,
       emptyText: 'No matches found.',
-      footerNote: 'Manually transcribed from the routing boards at the Wiesbaden shipping hub. This list is for reference only — it isn\'t used by the game or the postal code checker. Missing destinations will be added over time.'
+      footerNote: 'Manually transcribed from the routing boards at the Wiesbaden shipping hub. This list is for reference only — it isn\'t used by the game or the postal code checker. Missing destinations will be added over time.',
+      deuSectionTitle: 'Sort Codes (DEU / NLD)',
+      deuSectionSub: 'Printed on the label — always goes to the same city'
     }
   },
   de: {
@@ -1460,14 +1495,22 @@ const TR_TEXT = {
     scan: {
       btnLabel: 'Mit Kamera scannen',
       title: 'Postleitzahl scannen',
-      hint: 'Postleitzahl im Rahmen ausrichten',
+      hint: 'Postleitzahl und Sortiercode beide in den Rahmen bringen — beide werden automatisch erkannt',
       processing: 'Wird gelesen…',
       resultsTitle: 'Gefundene Zahlen — richtige antippen',
       retryBtn: 'Erneut versuchen',
       noMatchText: 'Konnte keine eindeutige Postleitzahl lesen. Licht verbessern, Code im Rahmen ausrichten und erneut versuchen.',
       cameraErrorText: 'Kein Kamerazugriff möglich. Browserberechtigungen prüfen oder Postleitzahl manuell eingeben.',
       ocrErrorText: 'Die Scan-Engine konnte nicht geladen werden. Internetverbindung prüfen und erneut versuchen.',
-      closeBtn: 'Schließen'
+      closeBtn: 'Schließen',
+      foundBand: 'ZIEL GEFUNDEN',
+      ambiguousBand: 'MEHRERE ZIELE',
+      noDestFound: 'In den Listen nicht gefunden',
+      noDestFoundSub: 'Dieser Code passte zu keinem Ziel in den aktuellen Referenzlisten. Versuch es erneut, sobald weitere Listen hinzugefügt wurden.',
+      deuFoundBand: 'SORTIERCODE ERKANNT',
+      deuSortSub: 'Dieser Sortiercode steht auf dem Etikett und geht immer an dieselbe Stadt — zuverlässiger als eine Bereichsschätzung.',
+      deuSortSubMulti: 'Dieser Sortiercode steht auf dem Etikett und geht immer an dieselbe Zustellregion (eine dieser Städte) — zuverlässiger als eine Bereichsschätzung.',
+      deuExampleChip: (plz) => 'z. B. PLZ ' + plz
     },
     allLists: {
       btnLabel: 'Alle Listen',
@@ -1475,7 +1518,9 @@ const TR_TEXT = {
       searchPlaceholder: 'Postleitzahl oder Stadt suchen…',
       metaLine: (code,eff) => code + ' · eff. ' + eff,
       emptyText: 'Keine Treffer gefunden.',
-      footerNote: 'Manuell von den Routing-Tafeln im Versandzentrum Wiesbaden übertragen. Diese Liste dient nur als Referenz — sie wird weder im Spiel noch im Postleitzahl-Prüfer verwendet. Fehlende Ziele werden mit der Zeit ergänzt.'
+      footerNote: 'Manuell von den Routing-Tafeln im Versandzentrum Wiesbaden übertragen. Diese Liste dient nur als Referenz — sie wird weder im Spiel noch im Postleitzahl-Prüfer verwendet. Fehlende Ziele werden mit der Zeit ergänzt.',
+      deuSectionTitle: 'Sortiercodes (DEU / NLD)',
+      deuSectionSub: 'Auf dem Etikett gedruckt — geht immer an dieselbe Stadt'
     }
   }
 };
@@ -1709,6 +1754,41 @@ const ALL_DESTINATIONS = [
     ]
   }
 ];
+
+/* ============================================================
+   SIRALAMA KODLARI — etiketin üzerindeki "DEU XXX X-XX" (Almanya)
+   ya da "NLD XXX X-XX" (Hollanda) biçimindeki UPS sıralama/sort
+   kodu. Posta kodu aralığı tahmini YAPILMADAN, doğrudan ve HER
+   ZAMAN aynı bölgeye/şehre işaret eder — bu yüzden posta kodu
+   aralığı eşleşmesinden daha güvenilirdir. Bazı kodlar (örn.
+   388900) tek bir şehre değil, aynı dağıtım bölgesindeki BİRDEN
+   FAZLA şehre karşılık gelebiliyor — bu yüzden her kod bir
+   "cities" dizisi tutar. Anahtar: koddaki TÜM rakamlar
+   boşluk/tire olmadan yan yana (örn. "DEU 093 9-00" → "093900").
+   Yeni etiketler geldikçe buraya yeni satır eklemek ya da mevcut
+   kodun "cities" dizisine yeni bir şehir eklemek yeterlidir.
+   ============================================================ */
+const DEU_SORT_CODES = {
+  '093900': { prefix: 'DEU', cities: [
+    { city: 'Hannover',  plz: '30159' },
+    { city: 'Bückeburg', plz: '31675' }
+  ]},
+  '520400': { prefix: 'DEU', cities: [{ city: 'Aachen', plz: '52078' }] },
+  '510900': { prefix: 'DEU', cities: [{ city: 'Köln',   plz: '50939' }] },
+  '388900': { prefix: 'DEU', cities: [
+    { city: 'Rheda-Wiedenbrück', plz: '33378' },
+    { city: 'Herford',           plz: '32052' },
+    { city: 'Steinhagen',        plz: '33803' }
+  ]},
+  '484100': { prefix: 'DEU', cities: [
+    { city: 'Nottuln',  plz: '48301' },
+    { city: 'Münster',  plz: '48157' }
+  ]},
+  '464200': { prefix: 'DEU', cities: [{ city: 'Bocholt', plz: '46395' }] },
+  '730027': { prefix: 'NLD', cities: [{ city: 'Groenlo (NL)', plz: '7141 DJ' }] },
+  '730025': { prefix: 'NLD', cities: [{ city: 'Arnhem (NL)',  plz: '6843 ES' }] },
+  '588944': { prefix: 'NLD', cities: [{ city: 'Heijen (NL)',  plz: '6598 MH' }] }
+};
 
 function expandRange(r){
   let a = r.a, b = r.b;
@@ -2476,6 +2556,15 @@ async function openScanner(){
   document.getElementById('scanOverlay').classList.add('show');
   scanSetState('video');
 
+  // Daha önce izin alınmış, hâlâ aktif bir kamera akışımız varsa onu
+  // TEKRAR KULLAN — her açılışta yeniden izin istenmesin diye
+  // getUserMedia() sadece SAYFA OTURUMUNDA BİR KERE çağrılır.
+  if(scanStream && scanStream.active){
+    scanStream.getTracks().forEach(t => { t.enabled = true; });
+    document.getElementById('scanVideo').srcObject = scanStream;
+    return;
+  }
+
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
     scanCameraFailed = true;
     document.getElementById('scanErrorText').textContent = L.cameraErrorText;
@@ -2497,9 +2586,12 @@ async function openScanner(){
 }
 
 function stopScanStream(){
+  // Akışı tamamen KAPATMAZ — sadece görüntü izlerini devre dışı bırakır
+  // (kamera ışığı söner) ki bir sonraki açılışta izin tekrar sorulmadan
+  // aynı akış anında yeniden kullanılabilsin. Akış yalnızca sayfa
+  // kapanınca / yenilenince tarayıcı tarafından serbest bırakılır.
   if(scanStream){
-    scanStream.getTracks().forEach(t => t.stop());
-    scanStream = null;
+    scanStream.getTracks().forEach(t => { t.enabled = false; });
   }
 }
 
@@ -2546,7 +2638,7 @@ async function captureAndRead(){
   const sh = Math.min(video.videoHeight - sy, boxRect.height / scale);
 
   const canvas = document.getElementById('scanCanvas');
-  const outScale = 3; // OCR doğruluğu için büyüt
+  const outScale = 2; // daha büyük kırpma alanında OCR hızını makul tut
   canvas.width = Math.max(1, sw * outScale);
   canvas.height = Math.max(1, sh * outScale);
   const ctx = canvas.getContext('2d');
@@ -2565,6 +2657,22 @@ async function captureAndRead(){
       tessedit_char_whitelist: '0123456789'
     });
     const text = data.text || '';
+
+    // ÖNCELİK: "DEU XXX X-XX" sıralama kodu — tüm rakamları yan yana
+    // birleştirip bilinen 6 haneli kodlar içinde kayan pencereyle arar.
+    // Bu, posta kodu aralığı tahmininden daha güvenilir olduğu için
+    // önce kontrol edilir.
+    const allDigits = text.replace(/\D/g, '');
+    let deuMatch = null;
+    for(let i=0; i + 6 <= allDigits.length; i++){
+      const window = allDigits.slice(i, i+6);
+      if(DEU_SORT_CODES[window]){ deuMatch = window; break; }
+    }
+    if(deuMatch){
+      applyDeuSortCodeResult(deuMatch);
+      return;
+    }
+
     const matches = text.match(/\d{3,5}/g) || [];
     const uniqueMatches = [...new Set(matches)];
 
@@ -2599,10 +2707,183 @@ async function captureAndRead(){
   }
 }
 
+/* ============================================================
+   TARAMA SONUCU → TÜM HEDEFLER — kameradan okunan kodu, sadece
+   Köln/Herne ile sınırlı kalmadan ALL_DESTINATIONS listesindeki
+   TÜM hedeflere (Nürnberg, Stuttgart, Frankfurt T/N, Cologne
+   Airport dahil) karşı kontrol eder ve doğrudan hangi hedefe
+   gittiğini söyler. Köln/Herne çıkarsa, zaten var olan daha
+   detaylı Köln/Herne paneli (checkCode) kullanılır.
+   ============================================================ */
+
+// "105-109" / "NL 384-385" / "AT 40-69" / "Schweiz (CH)" / "WW Economy"
+// gibi ham referans-liste metinlerini yapılandırılmış hale getirir.
+function parseListItem(item){
+  const s = item.trim();
+  let m = s.match(/^([A-Z]{2})\s+(\d+)(?:-(\d+))?$/);
+  if(m) return { kind:'countryRange', country:m[1], a:m[2], b:m[3]||m[2] };
+  m = s.match(/\(([A-Z]{2})\)\s*:?$/);
+  if(m) return { kind:'wholeCountry', country:m[1] };
+  if(/^WW\s*Economy$/i.test(s)) return { kind:'wholeCountry', country:'WW' };
+  m = s.match(/^(\d+)(?:-(\d+))?$/);
+  if(m) return { kind:'plain', a:m[1], b:m[2]||m[1] };
+  return null;
+}
+
+let _scanMatchIndexCache = null;
+function buildScanMatchIndex(){
+  if(_scanMatchIndexCache) return _scanMatchIndexCache;
+  const index = [];
+  ALL_DESTINATIONS.forEach(dest=>{
+    dest.groups.forEach(group=>{
+      const ranges = [];
+      group.items.forEach(item=>{
+        const parsed = parseListItem(item);
+        if(parsed && parsed.kind === 'plain'){
+          ranges.push({ a: parsed.a, b: parsed.b });
+        }
+      });
+      if(ranges.length){
+        index.push({ destName: dest.name, code: dest.code, eff: dest.eff, tier: group.tier, ranges });
+      }
+    });
+  });
+  _scanMatchIndexCache = index;
+  return index;
+}
+
+function findAllDestinationMatches(digits){
+  const index = buildScanMatchIndex();
+  const results = [];
+  index.forEach(entry=>{
+    const hits = matchAgainst(entry.ranges, digits);
+    hits.forEach(h=>{
+      results.push({
+        destName: entry.destName, code: entry.code, eff: entry.eff, tier: entry.tier,
+        range: h.range, rangeCertain: h.rangeCertain, partial: h.partial
+      });
+    });
+  });
+  return results;
+}
+
+function resolveScanDestination(digits){
+  const matches = findAllDestinationMatches(digits);
+  if(matches.length === 0) return { kind:'none' };
+  const scoreOf = h => (h.rangeCertain ? 1 : 0) + (h.partial ? 0 : 1);
+  let bestScore = -1;
+  matches.forEach(m=>{ const s = scoreOf(m); if(s > bestScore) bestScore = s; });
+  const topMatches = matches.filter(m => scoreOf(m) === bestScore);
+  const uniqueDestNames = [...new Set(topMatches.map(m=>m.destName))];
+  return {
+    kind: uniqueDestNames.length > 1 ? 'ambiguous' : 'single',
+    best: topMatches[0],
+    topMatches,
+    uniqueDestNames
+  };
+}
+
+function hideScanDestResult(){
+  document.getElementById('scanDestResult').classList.remove('show');
+}
+
+function showScanDestResult(resolved){
+  const LTop = TR_TEXT[currentLang];
+  const L = LTop.scan;
+
+  document.getElementById('result').classList.remove('show');
+
+  const band = document.getElementById('scanDestBand');
+  const name = document.getElementById('scanDestName');
+  const sub = document.getElementById('scanDestSub');
+  const chips = document.getElementById('scanDestChips');
+  chips.innerHTML = '';
+
+  if(resolved.kind === 'none'){
+    band.className = 'band none';
+    band.textContent = '';
+    name.className = 'destName none';
+    name.textContent = L.noDestFound;
+    sub.textContent = L.noDestFoundSub;
+  } else {
+    const ambiguous = resolved.kind === 'ambiguous';
+    band.className = 'band scankraft';
+    band.textContent = ambiguous ? L.ambiguousBand : L.foundBand;
+    name.className = 'destName scankraft';
+    name.textContent = ambiguous ? resolved.uniqueDestNames.join(' / ') : resolved.uniqueDestNames[0];
+    sub.textContent = resolved.best.code + ' · eff. ' + resolved.best.eff;
+    resolved.topMatches.forEach(m=>{
+      const c = document.createElement('span');
+      c.className = 'tierChip';
+      const tag = m.partial ? LTop.chipGuess : (m.rangeCertain ? '' : LTop.chipUncertain);
+      c.textContent = m.destName + ' · ' + m.tier + ' · ' + m.range + tag;
+      chips.appendChild(c);
+    });
+  }
+
+  document.getElementById('scanDestResult').classList.add('show');
+}
+
+function applyDeuSortCodeResult(code){
+  const info = DEU_SORT_CODES[code];
+  const formattedCode = info.prefix + ' ' + code.slice(0,3) + ' ' + code.slice(3,4) + '-' + code.slice(4);
+
+  // Kod tek bir şehre işaret ediyor VE o şehir Köln ya da Herne ise —
+  // örnek posta kodunu girip zaten var olan daha detaylı Köln/Herne
+  // panelini (checkCode) göster; tutarlılık için.
+  if(info.cities.length === 1 && (info.cities[0].city === 'Köln' || info.cities[0].city === 'Herne')){
+    document.getElementById('plzInput').value = info.cities[0].plz;
+    closeScanner();
+    hideScanDestResult();
+    checkCode();
+    return;
+  }
+
+  closeScanner();
+  document.getElementById('result').classList.remove('show');
+
+  const LTop = TR_TEXT[currentLang];
+  const L = LTop.scan;
+
+  const band = document.getElementById('scanDestBand');
+  const name = document.getElementById('scanDestName');
+  const sub = document.getElementById('scanDestSub');
+  const chips = document.getElementById('scanDestChips');
+  chips.innerHTML = '';
+
+  band.className = 'band scankraft';
+  band.textContent = L.deuFoundBand;
+  name.className = 'destName scankraft';
+  name.textContent = info.cities.map(c=>c.city).join(' / ');
+  sub.textContent = info.cities.length > 1 ? L.deuSortSubMulti : L.deuSortSub;
+
+  info.cities.forEach(c=>{
+    const chip = document.createElement('span');
+    chip.className = 'tierChip';
+    chip.textContent = formattedCode + ' · ' + c.city + ' · ' + L.deuExampleChip(c.plz);
+    chips.appendChild(chip);
+  });
+
+  document.getElementById('scanDestResult').classList.add('show');
+
+  // Girişe ilk örnek posta kodunu yazalım ki kullanıcı isterse manuel
+  // olarak da kontrol edebilsin.
+  document.getElementById('plzInput').value = info.cities[0].plz;
+}
+
 function applyScanResult(code){
   document.getElementById('plzInput').value = code;
   closeScanner();
-  checkCode();
+
+  const resolved = resolveScanDestination(code);
+  if(resolved.kind === 'single' && (resolved.best.destName === 'Köln (N)' || resolved.best.destName === 'Herne (N)')){
+    // Köln/Herne çıktı — zaten var olan daha detaylı panel kullanılsın.
+    hideScanDestResult();
+    checkCode();
+  } else {
+    document.getElementById('result').classList.remove('show');
+    showScanDestResult(resolved);
+  }
 }
 
 document.getElementById('scanBtn').addEventListener('click', openScanner);
@@ -2633,6 +2914,51 @@ function renderAllLists(query){
   body.innerHTML = '';
 
   let anyMatch = false;
+
+  // DEU sıralama kodları — ayrı, özel bir kart olarak en üstte gösterilir.
+  // Bir kod birden fazla şehre karşılık gelebildiği için her (kod, şehir)
+  // çifti ayrı bir satır/chip olarak listelenir.
+  const deuEntries = [];
+  Object.keys(DEU_SORT_CODES).forEach(code=>{
+    const info = DEU_SORT_CODES[code];
+    const formatted = info.prefix + ' ' + code.slice(0,3) + ' ' + code.slice(3,4) + '-' + code.slice(4);
+    info.cities.forEach(c=>{
+      deuEntries.push({
+        code, city: c.city, plz: c.plz,
+        label: formatted + ' → ' + c.city + ' (örn. ' + c.plz + ')'
+      });
+    });
+  });
+  const deuMatches = q === '' ? deuEntries : deuEntries.filter(e =>
+    e.city.toLowerCase().includes(q) || e.code.includes(q) || e.plz.includes(q)
+  );
+  if(deuMatches.length){
+    anyMatch = true;
+    const card = document.createElement('div');
+    card.className = 'destAccordion' + (q !== '' ? ' open' : '');
+    const head = document.createElement('button');
+    head.className = 'destAccordionHead';
+    head.innerHTML =
+      '<div><div class="destAccordionName">' + L.deuSectionTitle + '</div>' +
+      '<div class="destAccordionMeta">' + L.deuSectionSub + '</div></div>' +
+      '<div class="destAccordionChevron">⌄</div>';
+    head.addEventListener('click', ()=> card.classList.toggle('open'));
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'destAccordionBody';
+    const itemsEl = document.createElement('div');
+    itemsEl.className = 'destGroupItems';
+    itemsEl.style.marginTop = '12px';
+    deuMatches.forEach(e=>{
+      const chip = document.createElement('span');
+      chip.className = 'rangeChip' + (q !== '' ? ' hl' : '');
+      chip.textContent = e.label;
+      itemsEl.appendChild(chip);
+    });
+    bodyEl.appendChild(itemsEl);
+    card.appendChild(head);
+    card.appendChild(bodyEl);
+    body.appendChild(card);
+  }
 
   ALL_DESTINATIONS.forEach((dest, destIdx)=>{
     // Sorguyla eşleşen grupları belirle (isim eşleşirse tüm gruplar dahil).
