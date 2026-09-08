@@ -1048,7 +1048,7 @@
   <div class="inputCard">
     <label id="inputLabel">Posta kodu (PLZ)</label>
     <div class="inputRow">
-      <input type="text" id="plzInput" inputmode="numeric" placeholder="örn. 50667" autocomplete="off">
+      <input type="text" id="plzInput" inputmode="text" placeholder="örn. 50667" autocomplete="off">
       <button id="checkBtn" onclick="checkCode()">Kontrol Et</button>
     </div>
     <button class="scanBtn" id="scanBtn">📷 <span id="scanBtnText">Kamerayla Tara</span></button>
@@ -1217,7 +1217,7 @@ const TR_TEXT = {
     sub: 'Sevkiyat merkezinden fotoğraflanan yönlendirme etiketlerine göre — posta kodunu gir, Köln mü Herne mi (ya da başka bir hedef mi) hemen görün.',
     origin: 'Kaynak: Wiesbaden &nbsp;·&nbsp; Hedefler: Köln (N) / Herne (N) &nbsp;·&nbsp; eff. 31.08.2026',
     countries: { DE:'Almanya', NL:'Hollanda', DK:'Danimarka', FI:'Finlandiya', SE:'İsveç', WW:'Diğer/Dünya' },
-    inputLabelDefault: 'Posta kodu (PLZ)',
+    inputLabelDefault: 'Posta kodu (PLZ) ya da ülke adı',
     inputLabelNL: 'Hollanda posta kodu',
     placeholderDefault: 'örn. 50667',
     placeholderNL: 'örn. 3841',
@@ -1298,6 +1298,7 @@ const TR_TEXT = {
       noDestFound: 'Listelerde bulunamadı',
       noDestFoundSub: 'Bu kod şu anki referans listelerindeki hiçbir hedefle eşleşmedi. Yeni listeler eklendikçe tekrar denenebilir.',
       deuFoundBand: 'SIRALAMA KODU EŞLEŞTİ',
+      countryFoundBand: 'ÜLKE BULUNDU',
       deuSortSub: 'Bu sıralama kodu etiketin üzerinde yazıyor ve her zaman aynı şehre gider — posta kodu aralığından daha güvenilirdir.',
       deuSortSubMulti: 'Bu sıralama kodu etiketin üzerinde yazıyor ve her zaman aynı dağıtım bölgesine (bu şehirlerden birine) gider — posta kodu aralığından daha güvenilirdir.',
       deuExampleChip: (plz) => 'örn. PLZ ' + plz
@@ -1320,7 +1321,7 @@ const TR_TEXT = {
     sub: 'Based on photographed routing labels from the sorting center — enter a postcode to instantly see whether it goes to Köln, Herne, or somewhere else.',
     origin: 'Origin: Wiesbaden &nbsp;·&nbsp; Destinations: Köln (N) / Herne (N) &nbsp;·&nbsp; eff. 31.08.2026',
     countries: { DE:'Germany', NL:'Netherlands', DK:'Denmark', FI:'Finland', SE:'Sweden', WW:'Other/World' },
-    inputLabelDefault: 'Postcode (PLZ)',
+    inputLabelDefault: 'Postcode (PLZ) or country name',
     inputLabelNL: 'Dutch postcode',
     placeholderDefault: 'e.g. 50667',
     placeholderNL: 'e.g. 3841',
@@ -1403,6 +1404,7 @@ const TR_TEXT = {
       noDestFound: 'Not found in the lists',
       noDestFoundSub: 'This code didn\'t match any destination in the current reference lists. Try again once more lists are added.',
       deuFoundBand: 'SORT CODE MATCHED',
+      countryFoundBand: 'COUNTRY FOUND',
       deuSortSub: 'This sort code is printed on the label and always goes to the same city — more reliable than a range guess.',
       deuSortSubMulti: 'This sort code is printed on the label and always goes to the same delivery region (one of these cities) — more reliable than a range guess.',
       deuExampleChip: (plz) => 'e.g. PLZ ' + plz
@@ -1425,7 +1427,7 @@ const TR_TEXT = {
     sub: 'Basierend auf fotografierten Verteiletiketten aus dem Sortierzentrum — gib eine Postleitzahl ein und sieh sofort, ob sie nach Köln, Herne oder woanders hin geht.',
     origin: 'Herkunft: Wiesbaden &nbsp;·&nbsp; Ziele: Köln (N) / Herne (N) &nbsp;·&nbsp; eff. 31.08.2026',
     countries: { DE:'Deutschland', NL:'Niederlande', DK:'Dänemark', FI:'Finnland', SE:'Schweden', WW:'Sonstige/Welt' },
-    inputLabelDefault: 'Postleitzahl (PLZ)',
+    inputLabelDefault: 'Postleitzahl (PLZ) oder Ländername',
     inputLabelNL: 'Niederländische Postleitzahl',
     placeholderDefault: 'z. B. 50667',
     placeholderNL: 'z. B. 3841',
@@ -1508,6 +1510,7 @@ const TR_TEXT = {
       noDestFound: 'In den Listen nicht gefunden',
       noDestFoundSub: 'Dieser Code passte zu keinem Ziel in den aktuellen Referenzlisten. Versuch es erneut, sobald weitere Listen hinzugefügt wurden.',
       deuFoundBand: 'SORTIERCODE ERKANNT',
+      countryFoundBand: 'LAND GEFUNDEN',
       deuSortSub: 'Dieser Sortiercode steht auf dem Etikett und geht immer an dieselbe Stadt — zuverlässiger als eine Bereichsschätzung.',
       deuSortSubMulti: 'Dieser Sortiercode steht auf dem Etikett und geht immer an dieselbe Zustellregion (eine dieser Städte) — zuverlässiger als eine Bereichsschätzung.',
       deuExampleChip: (plz) => 'z. B. PLZ ' + plz
@@ -2328,6 +2331,16 @@ function checkCode(){
     herneHits = [{ tier:'Standard', range: L.countries[selectedCountry] + ' ' + L.wholeCountry, rangeCertain:true, partial:false, len:0, span:Infinity }];
   } else {
     const raw = document.getElementById('plzInput').value.trim();
+
+    // Yazılan şey bir ülke adı/kodu ise (örn. "Polonya", "Italy", "AT")
+    // posta kodu mantığına hiç girmeden doğrudan ülke bazlı hedef araması yap.
+    const typedCountry = detectCountryCode(raw);
+    if(typedCountry){
+      const resolvedCountry = resolveCountryDestination(typedCountry);
+      showCountryDestResult(resolvedCountry, typedCountry);
+      return;
+    }
+
     const digits = raw.replace(/\D/g,'');
     if(!digits){
       document.getElementById('plzInput').focus();
@@ -2339,6 +2352,25 @@ function checkCode(){
     } else {
       kolnHits = matchAgainst(DATA.koln.domestic, digits);
       herneHits = matchAgainst(DATA.herne.domestic, digits);
+
+      // KÖK NEDEN DÜZELTMESİ: manuel "Kontrol Et" eskiden SADECE Köln/Herne'ye
+      // bakıyordu. Artık kamera taramasındaki gibi TÜM hedefleri (Nürnberg,
+      // Stuttgart, Frankfurt T/N, Cologne Airport, Wiesbaden...) kontrol
+      // ediyor. Eşleşen hedef(ler) SADECE Köln ve/veya Herne'den ibaretse
+      // aşağıdaki detaylı Köln/Herne mantığına düşülür; ama eşitlik
+      // durumunda araya Frankfurt gibi ÜÇÜNCÜ bir hedef karışmışsa (örn.
+      // "Herne mi Frankfurt mu" eşitliği), eski mantık Frankfurt'u hiç
+      // bilmediği için onu sessizce yok sayıp yanlışlıkla sadece Herne
+      // dermiş gibi davranırdı — bunu önlemek için o durumda genel paneli
+      // kullanıp TÜM adayları (Herne + Frankfurt) gösteriyoruz.
+      const resolved = resolveScanDestination(digits);
+      const onlyKolnHerne = resolved.kind !== 'none' &&
+        resolved.uniqueDestNames.every(n => n === 'Köln (N)' || n === 'Herne (N)');
+      if(resolved.kind !== 'none' && !onlyKolnHerne){
+        resultEl.classList.remove('show');
+        showScanDestResult(resolved);
+        return;
+      }
     }
   }
 
@@ -2715,7 +2747,7 @@ async function captureAndRead(){
 
   try{
     const { data } = await Tesseract.recognize(canvas, 'eng', {
-      tessedit_char_whitelist: '0123456789'
+      tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz '
     });
     const text = data.text || '';
 
@@ -2732,6 +2764,19 @@ async function captureAndRead(){
     if(deuMatch){
       applyDeuSortCodeResult(deuMatch);
       return;
+    }
+
+    // İKİNCİL ÖNCELİK: etikette bir ülke adı/kodu (Polonya, Italy,
+    // Österreich, AT vb.) görünüyorsa doğrudan o ülkenin hangi hedefe
+    // gittiğini söyle — posta kodu aramaya hiç gerek kalmadan.
+    const detectedCountry = detectCountryCode(text);
+    if(detectedCountry){
+      const resolvedCountry = resolveCountryDestination(detectedCountry);
+      if(resolvedCountry.kind !== 'none'){
+        closeScanner();
+        showCountryDestResult(resolvedCountry, detectedCountry);
+        return;
+      }
     }
 
     const matches = text.match(/\d{3,5}/g) || [];
@@ -2789,6 +2834,152 @@ function parseListItem(item){
   m = s.match(/^(\d+)(?:-(\d+))?$/);
   if(m) return { kind:'plain', a:m[1], b:m[2]||m[1] };
   return null;
+}
+
+/* ============================================================
+   ÜLKE TESPİTİ — "Polonya", "Italy", "Österreich", "PL" gibi
+   metinlerden ülke kodunu bulup ALL_DESTINATIONS'daki ülke
+   girdileriyle (wholeCountry / countryRange) eşleştirir. Hem
+   kamera taramasında (OCR harf de okumaya başladı) hem manuel
+   posta kodu kutusuna ülke adı yazıldığında kullanılır.
+   ============================================================ */
+const COUNTRY_ALIASES = {
+  AT: ['austria','österreich','osterreich','avusturya'],
+  BE: ['belgium','belgien','belçika','belcika'],
+  BG: ['bulgaria','bulgarien','bulgaristan'],
+  CH: ['switzerland','schweiz','i̇sviçre','isvicre','isviçre'],
+  CY: ['cyprus','zypern','kıbrıs','kibris'],
+  CZ: ['czech republic','czechia','tschechien','çekya','cekya'],
+  DK: ['denmark','dänemark','danemark','danimarka'],
+  EE: ['estonia','estland','estonya'],
+  ES: ['spain','spanien','ispanya','i̇spanya'],
+  FI: ['finland','finnland','finlandiya'],
+  FR: ['france','frankreich','fransa'],
+  GB: ['united kingdom','great britain','grossbritannien','grossbrit','i̇ngiltere','ingiltere','birlesik krallik'],
+  GG: ['guernsey'],
+  GR: ['greece','griechenland','yunanistan'],
+  HR: ['croatia','kroatien','hırvatistan','hirvatistan'],
+  HU: ['hungary','ungarn','macaristan'],
+  IE: ['ireland','irland','irlanda'],
+  IT: ['italy','italien','italya','i̇talya'],
+  JE: ['jersey'],
+  LI: ['liechtenstein'],
+  LT: ['lithuania','litauen','litvanya'],
+  LU: ['luxembourg','luxemburg','lüksemburg','luksemburg'],
+  LV: ['latvia','lettland','letonya'],
+  MC: ['monaco','monako'],
+  MT: ['malta'],
+  NL: ['netherlands','niederlande','hollanda'],
+  NO: ['norway','norwegen','norveç','norvec'],
+  PL: ['poland','polen','polonya'],
+  PT: ['portugal','portekiz'],
+  RO: ['romania','rumänien','rumanien','romanya'],
+  SE: ['sweden','schweden','i̇sveç','isvec','isveç'],
+  SI: ['slovenia','slowenien','slovenya'],
+  SK: ['slovakia','slowakei','slovakya'],
+  SM: ['san marino'],
+  AD: ['andorra'],
+  WW: ['worldwide','world wide']
+};
+
+function detectCountryCode(text){
+  if(!text) return null;
+  const upper = text.toUpperCase();
+  // önce standalone 2 harfli kodu ara (örn. "PL", "AT 10-39" içindeki "AT")
+  const codeMatches = upper.match(/\b[A-Z]{2}\b/g) || [];
+  for(const c of codeMatches){
+    if(COUNTRY_ALIASES[c]) return c;
+  }
+  // sonra ülke isimlerini (TR/EN/DE) ara
+  const lower = text.toLowerCase();
+  for(const code in COUNTRY_ALIASES){
+    for(const alias of COUNTRY_ALIASES[code]){
+      if(lower.includes(alias)) return code;
+    }
+  }
+  return null;
+}
+
+function getCountryDisplayName(countryCode){
+  for(const dest of ALL_DESTINATIONS){
+    for(const group of dest.groups){
+      for(const item of group.items){
+        const parsed = parseListItem(item);
+        if(parsed && parsed.kind === 'wholeCountry' && parsed.country === countryCode){
+          return item.replace(/\s*\([A-Z]{2}\)\s*:?$/, '').trim();
+        }
+      }
+    }
+  }
+  return countryCode;
+}
+
+function findCountryDestinationMatches(countryCode){
+  const results = [];
+  ALL_DESTINATIONS.forEach(dest=>{
+    dest.groups.forEach(group=>{
+      group.items.forEach(item=>{
+        const parsed = parseListItem(item);
+        if(!parsed) return;
+        if(parsed.kind === 'wholeCountry' && parsed.country === countryCode){
+          results.push({ destName: dest.name, code: dest.code, eff: dest.eff, tier: group.tier, matchType: 'whole' });
+        } else if(parsed.kind === 'countryRange' && parsed.country === countryCode){
+          results.push({ destName: dest.name, code: dest.code, eff: dest.eff, tier: group.tier, matchType: 'range', range: item });
+        }
+      });
+    });
+  });
+  return results;
+}
+
+function resolveCountryDestination(countryCode){
+  const matches = findCountryDestinationMatches(countryCode);
+  if(matches.length === 0) return { kind:'none' };
+  const uniqueDestNames = [...new Set(matches.map(m=>m.destName))];
+  return {
+    kind: uniqueDestNames.length > 1 ? 'ambiguous' : 'single',
+    best: matches[0],
+    topMatches: matches,
+    uniqueDestNames
+  };
+}
+
+function showCountryDestResult(resolved, countryCode){
+  const LTop = TR_TEXT[currentLang];
+  const L = LTop.scan;
+  document.getElementById('result').classList.remove('show');
+
+  const band = document.getElementById('scanDestBand');
+  const name = document.getElementById('scanDestName');
+  const sub = document.getElementById('scanDestSub');
+  const chips = document.getElementById('scanDestChips');
+  chips.innerHTML = '';
+
+  const countryName = getCountryDisplayName(countryCode);
+
+  if(resolved.kind === 'none'){
+    band.className = 'band none';
+    band.textContent = '';
+    name.className = 'destName none';
+    name.textContent = L.noDestFound;
+    sub.textContent = countryName + ' (' + countryCode + ') — ' + L.noDestFoundSub;
+  } else {
+    const ambiguous = resolved.kind === 'ambiguous';
+    band.className = 'band scankraft';
+    band.textContent = L.countryFoundBand;
+    name.className = 'destName scankraft';
+    name.textContent = ambiguous ? resolved.uniqueDestNames.join(' / ') : resolved.uniqueDestNames[0];
+    sub.textContent = countryName + ' (' + countryCode + ')';
+    resolved.topMatches.forEach(m=>{
+      const chip = document.createElement('span');
+      chip.className = 'tierChip';
+      const rangeLabel = m.matchType === 'whole' ? LTop.wholeCountry : m.range;
+      chip.textContent = m.destName + ' · ' + m.tier + ' · ' + rangeLabel;
+      chips.appendChild(chip);
+    });
+  }
+
+  document.getElementById('scanDestResult').classList.add('show');
 }
 
 let _scanMatchIndexCache = null;
